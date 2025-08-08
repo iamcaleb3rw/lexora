@@ -1,15 +1,23 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { Toaster } from "sonner";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const sfPro = localFont({
+  src: [
+    {
+      path: "./fonts/SFProDisplay-Medium.woff2",
+      weight: "500",
+    },
+    {
+      path: "./fonts/SFProDisplay-Regular.woff2",
+      weight: "400",
+    },
+    {
+      path: "./fonts/SFProDisplay-Bold.woff2",
+      weight: "700",
+    },
+  ],
 });
 
 export const metadata: Metadata = {
@@ -23,10 +31,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
+    <html lang="en" suppressHydrationWarning>
+      <body className={sfPro.className}>
+        <Toaster richColors />
         {children}
       </body>
     </html>
