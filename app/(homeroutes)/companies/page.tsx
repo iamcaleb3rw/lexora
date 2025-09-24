@@ -17,7 +17,7 @@ const Companies = () => {
             tools, workflows, and expectations.
           </p>
         </div>
-        <Link href="/create-company" className="cursor-pointer">
+        <Link href="/company-manage" className="cursor-pointer">
           <ThreeDButton text="Train talent now   →" />
         </Link>
       </div>

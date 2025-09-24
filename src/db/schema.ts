@@ -1,4 +1,5 @@
-import { relations } from "drizzle-orm";
+import { InferSelectModel, relations } from "drizzle-orm";
+
 import {
   pgTable,
   text,
@@ -20,6 +21,12 @@ export const lessonTypeEnum = pgEnum("lesson_type", [
   "live",
 ]);
 
+export const difficultyTypeEnum = pgEnum("difficulty_level", [
+  "novice",
+  "intermediate",
+  "expert",
+]);
+
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
   name: text("name").notNull(),
@@ -29,7 +36,6 @@ export const user = pgTable("user", {
     .$defaultFn(() => false)
     .notNull(),
   image: text("image"),
-  company_id: integer("company_id").references(() => companies.id),
   createdAt: timestamp("created_at")
     .$defaultFn(() => /* @__PURE__ */ new Date())
     .notNull(),
@@ -85,6 +91,9 @@ export const verification = pgTable("verification", {
 export const companies = pgTable("companies", {
   id: serial("id").primaryKey(),
   name: varchar("name", { length: 255 }),
+  owner_id: text("owner_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
   email: varchar("email", { length: 255 }).notNull(),
   logo_url: varchar("logo_url", { length: 500 }).default(""),
   description: text("description"),
@@ -95,12 +104,10 @@ export const courses = pgTable("courses", {
   id: serial("id").primaryKey(),
   title: varchar("title", { length: 255 }).notNull(),
   description: text("description"),
+  thumbnail_url: text("thumbnail_url"),
   company_id: integer("company_id")
     .notNull()
     .references(() => companies.id),
-  total_xp: integer("total_xp").default(0),
-  category: varchar("category", { length: 100 }),
-  level: varchar("level", { length: 50 }),
   is_published: boolean("is_published").default(false),
   created_at: timestamp("created_at").defaultNow(),
 });
@@ -108,14 +115,23 @@ export const courses = pgTable("courses", {
 export const lessons = pgTable("lessons", {
   id: serial("id").primaryKey(),
   type: lessonTypeEnum("type").notNull(),
+  difficulty_level: difficultyTypeEnum("difficulty_level")
+    .notNull()
+    .default("novice"),
   course_id: integer("course_id")
     .notNull()
     .references(() => courses.id),
   title: varchar("title", { length: 255 }).notNull(),
-  content: text("content"), // JSON stored as string for flexibility
+  content: text("content"),
+  video_url: text("video_url"),
+  deliverables: text("deliverables"), // JSON stored as string for flexibility
   order: integer("order").notNull(),
   xp: integer("xp").default(10).notNull(),
+  isCompleted: boolean("isCompleted").default(false),
   created_at: timestamp("created_at").defaultNow(),
+  evaluation_criteria: text("evaluation_criteria"),
+  feedback: text("feedback"),
+  submission_url: text("submission_url"),
 });
 
 export const badges = pgTable("badges", {
@@ -123,6 +139,11 @@ export const badges = pgTable("badges", {
   name: text("name").notNull(),
   description: text("description"),
   xp_threshold: integer("xp_threshold").notNull(),
+});
+
+export const categories = pgTable("categories", {
+  id: serial("id").primaryKey(),
+  name: text("name").notNull(),
 });
 export const userBadges = pgTable(
   "user_badges",
@@ -170,20 +191,53 @@ export const userCompletedLessons = pgTable(
 
 export const userRelations = relations(user, ({ many, one }) => ({
   badges: many(userBadges),
-  company: one(companies, {
-    fields: [user.company_id],
-    references: [companies.id],
-  }),
+  companies: many(companies),
   lessons: many(userCompletedLessons),
+}));
+
+export const companiesRelations = relations(companies, ({ one, many }) => ({
+  owner: one(user, {
+    fields: [companies.owner_id],
+    references: [user.id],
+  }),
+  courses: many(courses),
 }));
 
 export const courseRelations = relations(courses, ({ many, one }) => ({
   lessons: many(lessons),
+  categories: many(coursesToCategories),
   company: one(companies, {
     fields: [courses.company_id],
     references: [companies.id],
   }),
 }));
+
+export const categoriesRelations = relations(categories, ({ many }) => ({
+  courses: many(coursesToCategories),
+}));
+
+export const coursesToCategories = pgTable("courses_to_categories", {
+  courseId: integer("course_id")
+    .notNull()
+    .references(() => courses.id),
+  categoryId: integer("category_id")
+    .notNull()
+    .references(() => categories.id),
+});
+
+export const coursesToCategoriesRelations = relations(
+  coursesToCategories,
+  ({ one }) => ({
+    course: one(courses, {
+      fields: [coursesToCategories.courseId],
+      references: [courses.id],
+    }),
+    category: one(categories, {
+      fields: [coursesToCategories.categoryId],
+      references: [categories.id],
+    }),
+  })
+);
 
 export const lessonRelations = relations(lessons, ({ one, many }) => ({
   course: one(courses, {
@@ -206,3 +260,9 @@ export const userCompletedLessonsRelations = relations(
     }),
   })
 );
+
+export type Company = InferSelectModel<typeof companies>;
+export type CompanyWithCourses = {
+  company: Company;
+  courses: InferSelectModel<typeof courses> | null;
+};

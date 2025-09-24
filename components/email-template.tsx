@@ -29,12 +29,12 @@ export const EmailTemplate = ({ userFirstname, otp }: EmailTemplateProps) => {
             <Text style={text}>Your requested one time password (OTP) is:</Text>
             <Text style={code}>{otp}</Text>
             <Text style={text}>
-              If you did&apos;t request this code, just ignore and delete this
+              If you did&apos;nt request this code, just ignore and delete this
               message.
             </Text>
             <Text style={text}>
               To keep your account secure, please don&apos;t forward this email
-              to anyone. See our Help Center for{" "}
+              to anyone.
             </Text>
             <Text style={text}>Happy Research!</Text>
           </Section>

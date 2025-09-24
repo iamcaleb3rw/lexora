@@ -1,13 +1,12 @@
 import { getCompanyById } from "@/app/actions/get-company";
-import { auth } from "@/lib/auth";
-import { redirect } from "next/navigation";
-
-import { headers } from "next/headers";
-import React from "react";
-import Image from "next/image";
-import { Button } from "@react-email/components";
+import CompanyPageClient from "@/components/CompanyPageClient";
+import { CompanyPageSkeleton } from "@/components/loaders/CompanyPageLoading";
 import { ThreeDButton } from "@/components/ThreeDButton";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
 import Link from "next/link";
+
+import React, { Suspense } from "react";
 
 const CompanyPage = async ({
   params,
@@ -17,43 +16,21 @@ const CompanyPage = async ({
   const session = await auth.api.getSession({
     headers: await headers(),
   });
-  const { companyId } = await params;
-  const company = await getCompanyById(companyId);
-  const logoUrl: string | null = company[0].logo_url;
-  if (!company) {
-    return redirect("/");
-  }
+  const id = (await params).companyId;
+  const company = await getCompanyById(id);
+  const userOwnsCompany = company?.owner_id === session?.user.id;
+  console.log(userOwnsCompany);
+
   return (
-    <div>
-      <div className="p-2 flex gap-5">
-        <div className="border w-fit aspect-square p-3 rounded-2xl">
-          {logoUrl ? (
-            <img src={logoUrl} alt="My Image" className="w-14" />
-          ) : (
-            <p>No image available</p>
-          )}
-        </div>
-        <div>
-          <p className="text-xl font-medium tracking-tight">
-            {company[0].name}
-          </p>
-          <p className="font-medium text-muted-foreground max-w-[640px]">
-            {company[0].description}
-          </p>
-        </div>
+    <div className="w-full">
+      <div className="border-b py-2 bg-white/40 backdrop-blur-md flex justify-end px-4 z-20   sticky top-0">
+        {userOwnsCompany && (
+          <Link href={`/company-manage/${id}/create-course`}>
+            <ThreeDButton text="Create Course" />
+          </Link>
+        )}
       </div>
-      <hr />
-      <div>
-        <div className="p-2">
-          <h1 className="text-xl font-medium">Twigane's published courses</h1>
-          <div className=" flex flex-col items-center justify-center border border-dashed min-h-[250px] bg-muted/40">
-            Twigane has no published courses yet
-            <Link href={`/company-manage/${companyId}/create-course`}>
-              <ThreeDButton text="Create Course +"></ThreeDButton>
-            </Link>
-          </div>
-        </div>
-      </div>
+      <CompanyPageClient company={company} />
     </div>
   );
 };

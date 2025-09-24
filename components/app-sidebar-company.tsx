@@ -1,3 +1,4 @@
+"use client";
 import {
   Sidebar,
   SidebarContent,
@@ -8,6 +9,10 @@ import {
   SidebarMenuItem,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+
+import { Kode_Mono } from "next/font/google";
+
+import Flame from "@/public/flame.json";
 import {
   DropdownMenu,
   DropdownMenuTrigger,
@@ -16,7 +21,7 @@ import {
   DropdownMenuGroup,
   DropdownMenuSeparator,
 } from "./ui/dropdown-menu";
-
+import Lottie from "lottie-react";
 import { Button } from "./ui/button";
 import {
   ChevronDown,
@@ -29,8 +34,16 @@ import {
   Sun,
 } from "lucide-react";
 import { Progress } from "./ui/progress";
-
+const poppins = Kode_Mono({
+  weight: "700",
+  subsets: ["latin"],
+});
 export function AppSidebar() {
+  const defaultOptions = {
+    animationData: Flame,
+    loop: true,
+    autoplay: true,
+  };
   return (
     <Sidebar>
       <SidebarHeader className="flex flex-row justify-between items-center">
@@ -97,14 +110,18 @@ export function AppSidebar() {
       </SidebarContent>
       <SidebarFooter>
         <div className="border p-2 shadow-xs rounded-xl">
-          <h1 className="font-medium tracking-tight">Credits usage</h1>
-          <p className="text-sm font-medium text-muted-foreground">
-            2 out of 5 free case files
-          </p>
-          <Progress value={40} />
-          <Button className="text-sm w-full mt-2" size={"sm"}>
-            Upgrade for more files
-          </Button>
+          <h1 className="font-medium tracking-tight flex items-center">
+            Learning streak
+          </h1>
+          <div className="flex">
+            <div className={poppins.className}>
+              <div className="-leading-1 ml-4 flex flex-col">
+                <p className="text-6xl h-fit -leading-1 font-semibold text-orange-500">
+                  45
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
         <div></div>
       </SidebarFooter>

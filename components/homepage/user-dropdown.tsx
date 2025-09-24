@@ -26,7 +26,7 @@ export function UserDropDown({ userImage }: any) {
           </Avatar>
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56" align="start">
+      <DropdownMenuContent className="w-56" align="start" >
         <DropdownMenuLabel>My Account</DropdownMenuLabel>
         <DropdownMenuGroup>
           <DropdownMenuItem>

@@ -1,4 +1,9 @@
 "use client";
+
+import Link from "next/link";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import {
   NavigationMenu,
@@ -11,14 +16,13 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+
+import Spinner from "@/components/spinner";
 import Logo from "../logo";
 import UserMenu from "../user-menu";
-import Link from "next/link";
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import Spinner from "../spinner";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { Skeleton } from "../ui/skeleton";
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
@@ -29,11 +33,12 @@ const navigationLinks = [
 ];
 
 export default function Navbar() {
-  const { data: session } = authClient.useSession();
+  const { data: session, isPending } = authClient.useSession();
   const userImage = session?.user.image;
   const userEmail = session?.user.email;
   const userName = session?.user.name;
-  const [isActive, setIsActive] = useState<boolean | null>();
+
+  const [isActive, setIsActive] = useState<number | null>(null);
   const [isClicked, setIsClicked] = useState(false);
   const router = useRouter();
 
@@ -42,6 +47,66 @@ export default function Navbar() {
     setIsClicked(true);
     router.push("/workspace");
   };
+
+  // Right-side actions: loading, signed-in, signed-out
+  const RightActions = () => {
+    if (isPending) {
+      return (
+        <div className="flex gap-2 items-center">
+          <Skeleton className="h-9 bg-muted-foreground/30 w-28 rounded-md" />{" "}
+          {/* Button placeholder */}
+          <Skeleton className="h-9 w-9 bg-muted-foreground/30 rounded-full" />{" "}
+          {/* Avatar placeholder */}
+        </div>
+      );
+    }
+
+    if (session) {
+      return (
+        <div className="flex gap-2 items-center">
+          <Link href="/workspace">
+            <Button
+              className="
+                bg-zinc-100
+                text-zinc-900
+                text-sm
+                border
+                hover:bg-zinc-200
+                border-zinc-300
+                rounded-md
+                shadow-[0_4px_0_0_#d4d4d4]
+                active:translate-y-[2px]
+                active:shadow-[0_1px_0_0_#d4d4d4]
+                transition-transform
+                duration-200
+              "
+              onClick={handleClick}
+            >
+              {isClicked && <Spinner />}
+              My Workspace
+            </Button>
+          </Link>
+          <UserMenu
+            userImage={userImage}
+            userEmail={userEmail}
+            userName={userName}
+          />
+        </div>
+      );
+    }
+
+    return (
+      <div className="flex items-center gap-2">
+        <Button asChild variant="ghost" size="sm" className="text-sm">
+          <Link href="/login">Sign In</Link>
+        </Button>
+        <Button asChild size="sm" className="text-sm">
+          <Link href="/login">Get Started</Link>
+        </Button>
+      </div>
+    );
+  };
+
   return (
     <header className="border-b px-4 md:px-16">
       <div className="flex h-13 items-center justify-between gap-4">
@@ -88,8 +153,11 @@ export default function Navbar() {
                   {navigationLinks.map((link, index) => (
                     <NavigationMenuItem
                       key={index}
-                      className={cn(`py-1.5`, isActive && "bg-purple-400")}
-                      onClick={() => setIsActive(true)}
+                      className={cn(
+                        `py-1.5`,
+                        isActive === index && "bg-purple-400"
+                      )}
+                      onClick={() => setIsActive(index)}
                     >
                       <Link href={link.href} className="py-1.5">
                         {link.label}
@@ -100,14 +168,15 @@ export default function Navbar() {
               </NavigationMenu>
             </PopoverContent>
           </Popover>
-          {/* Main nav */}
+          {/* Logo */}
           <div className="flex items-center gap-6">
-            <a href="#" className="text-primary hover:text-primary/90">
+            <Link href="#" className="text-primary hover:text-primary/90">
               <Logo />
-            </a>
+            </Link>
           </div>
         </div>
-        {/* Navigation menu */}
+
+        {/* Desktop navigation menu */}
         <NavigationMenu className="max-md:hidden">
           <NavigationMenuList className="gap-2">
             {navigationLinks.map((link, index) => (
@@ -122,48 +191,9 @@ export default function Navbar() {
             ))}
           </NavigationMenuList>
         </NavigationMenu>
-        {/* Right side */}
-        {userImage ? (
-          <div className="flex gap-2 items-center">
-            <Link href={"/workspace"}>
-              <Button
-                className="
-            bg-zinc-100
-            text-zinc-900
-            text-sm
-            border
-            hover:bg-zinc-200
-            border-zinc-300
-            rounded-md
-            shadow-[0_4px_0_0_#d4d4d4]
-            active:translate-y-[2px]
-            active:shadow-[0_1px_0_0_#d4d4d4]
-            transition-transform
-            duration-200
-          "
-                onClick={handleClick}
-              >
-                {" "}
-                {isClicked && <Spinner />}
-                My Workspace
-              </Button>
-            </Link>
-            <UserMenu
-              userImage={userImage}
-              userEmail={userEmail}
-              userName={userName}
-            />
-          </div>
-        ) : (
-          <div className="flex items-center gap-2">
-            <Button asChild variant="ghost" size="sm" className="text-sm">
-              <a href="#">Sign In</a>
-            </Button>
-            <Button asChild size="sm" className="text-sm">
-              <a href="#">Get Started</a>
-            </Button>
-          </div>
-        )}
+
+        {/* Right-side actions */}
+        <RightActions />
       </div>
     </header>
   );

@@ -1,49 +1,76 @@
 "use client";
-import { FieldValues, SubmitHandler, useForm } from "react-hook-form";
+
+import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import axios from "axios";
-import { ThreeDButton } from "@/components/ThreeDButton";
-import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDownIcon, Image, UserCircleIcon } from "lucide-react";
-import { cn } from "@/lib/utils";
-import { useState } from "react";
-import { toast } from "sonner";
-import { createCompany } from "../actions/create-company";
-import { useRouter } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import Spinner from "@/components/spinner";
+import { Image } from "lucide-react";
+import { createCompany } from "../actions/create-company";
+import { authClient } from "@/lib/auth-client";
 
-// Define Zod schema
+// ------------------ Zod Schema ------------------
 const companySchema = z.object({
   companyname: z.string().min(2, "Company name is required"),
   about: z.string().min(10, "Please provide more details"),
   email: z.string().email("Invalid email address"),
   file: z
     .any()
-    .refine((file) => file?.[0]?.size <= 10_000_000, "Max file size is 10MB")
-    .optional(), // Make file optional since it's handled separately
+    .refine(
+      (file) => !file || file?.[0]?.size <= 10_000_000,
+      "Max file size is 10MB"
+    )
+    .optional(),
   agreement: z.enum(["agree"]).refine((val) => val === "agree", {
     message: "You must accept the agreement",
   }),
 });
 
-// Infer the TypeScript type
 type CompanyForm = z.infer<typeof companySchema>;
 
+// ------------------ Component ------------------
 export default function Example() {
+  // ------------------ Hooks ------------------
+  const { data: session, isPending } = authClient.useSession();
   const router = useRouter();
+  const [mounted, setMounted] = useState(false);
   const [file, setFile] = useState<File>();
-  const [url, setUrl] = useState(""); // The IPFS or gateway URL
+  const [url, setUrl] = useState("");
   const [uploading, setUploading] = useState(false);
 
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<CompanyForm>({
+    resolver: zodResolver(companySchema),
+  });
+
+  // ------------------ Effects ------------------
+  useEffect(() => setMounted(true), []);
+
+  useEffect(() => {
+    if (mounted && !isPending && !session) {
+      router.push("/login");
+    }
+  }, [mounted, isPending, session, router]);
+
+  if (!mounted || !session) return null; // Prevent SSR errors
+
+  const userId: string = session.user.id;
+
+  // ------------------ File Upload ------------------
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target?.files?.[0];
     setFile(selected);
-    if (selected) {
-      uploadFile(selected);
-    }
+    if (selected) uploadFile(selected);
   };
 
   const uploadFile = async (file: File) => {
@@ -51,59 +78,45 @@ export default function Example() {
       setUploading(true);
       const data = new FormData();
       data.set("file", file);
-      console.log(data);
-      const uploadRequest = await axios.post("/api/uploadlogo", data);
-      console.log("RESPONSE RECIEVED", uploadRequest.data);
-      if (uploadRequest.status !== 200) {
-        toast.error("Upload failed");
-      } else if (uploadRequest.status == 200) {
+
+      const res = await axios.post("/api/uploadlogo", data);
+
+      if (res.status === 200) {
         toast.success("Logo was saved successfully");
+        setUrl(res.data);
+      } else {
+        toast.error("Upload failed");
       }
-      setUrl(uploadRequest.data);
-      console.log("URL HERE", uploadRequest.data); // Fixed: was logging old url state
-    } catch (e) {
-      console.error(e);
+    } catch (err) {
+      console.error(err);
       toast.error("Trouble uploading file");
     } finally {
       setUploading(false);
     }
   };
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors, isSubmitting, isSubmitSuccessful },
-    getValues,
-  } = useForm<CompanyForm>({
-    resolver: zodResolver(companySchema),
-  });
-
+  // ------------------ Form Submission ------------------
   const onSubmit = async (data: CompanyForm) => {
     try {
-      console.log("Form data:", data);
-      console.log("Logo URL:", url);
-
-      // Prepare the data to send to the server action
-
-      // Call the server action
       const result = await createCompany(
         data.companyname,
         data.about,
         url,
-        data.email
+        data.email,
+        userId
       );
-      console.log(result[0].insertedId);
+
       if (result) {
         toast.success("Company registered successfully!");
-
         router.push(`/company-manage/${result[0].insertedId}`);
       }
-    } catch (error) {
-      console.error("Submission error:", error);
+    } catch (err) {
+      console.error(err);
       toast.error("An error occurred while registering the company");
     }
   };
 
+  // ------------------ Render ------------------
   return (
     <form
       onSubmit={handleSubmit(onSubmit)}
@@ -112,6 +125,7 @@ export default function Example() {
       <div className="text-lg font-black w-full border-b sticky top-0 py-4 mb-4 bg-background">
         Company registration
       </div>
+
       <div className="space-y-12 px-1">
         {/* Profile Section */}
         <div className="border-b border-gray-900/10 pb-12">
@@ -120,6 +134,7 @@ export default function Example() {
             This information will be displayed publicly so be careful what you
             share.
           </p>
+
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             {/* Company Name */}
             <div className="sm:col-span-4">
@@ -143,6 +158,7 @@ export default function Example() {
                 )}
               </div>
             </div>
+
             {/* About */}
             <div className="col-span-full">
               <label
@@ -168,6 +184,7 @@ export default function Example() {
                 Write a few sentences about your company.
               </p>
             </div>
+
             {/* File Upload */}
             <div className="col-span-full">
               <label
@@ -176,6 +193,7 @@ export default function Example() {
               >
                 Company logo
               </label>
+
               {!url && (
                 <div className="mt-2 flex justify-center rounded-lg border border-dashed border-gray-900/25 px-6 py-10">
                   <div className="text-center">
@@ -208,6 +226,7 @@ export default function Example() {
                   </div>
                 </div>
               )}
+
               {url && (
                 <div className="flex flex-col gap-1">
                   <img
@@ -217,7 +236,7 @@ export default function Example() {
                   />
                   <Button
                     type="button"
-                    variant={"secondary"}
+                    variant="secondary"
                     onClick={() => {
                       setUrl("");
                       setFile(undefined);
@@ -230,6 +249,7 @@ export default function Example() {
             </div>
           </div>
         </div>
+
         {/* Contact Section */}
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold text-gray-900">
@@ -238,6 +258,7 @@ export default function Example() {
           <p className="mt-1 text-sm text-gray-600">
             Use an email address we should associate to your company
           </p>
+
           <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
             <div className="sm:col-span-6">
               <label
@@ -263,6 +284,7 @@ export default function Example() {
             </div>
           </div>
         </div>
+
         {/* Agreement Section */}
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold text-gray-900">
@@ -271,6 +293,7 @@ export default function Example() {
           <p className="mt-1 text-sm text-gray-600">
             Make sure to read the privacy policy, terms and conditions
           </p>
+
           <div className="mt-10 space-y-6">
             <div className="flex items-center gap-x-3">
               <input
@@ -288,6 +311,7 @@ export default function Example() {
                 profile
               </label>
             </div>
+
             <div className="flex items-center gap-x-3">
               <input
                 id="disagree"
@@ -304,6 +328,7 @@ export default function Example() {
                 profile
               </label>
             </div>
+
             {errors.agreement && (
               <p className="text-sm text-red-500 mt-1">
                 {errors.agreement.message}
@@ -312,6 +337,8 @@ export default function Example() {
           </div>
         </div>
       </div>
+
+      {/* Submit Buttons */}
       <div className="mt-6 flex items-center justify-end gap-x-6">
         <Button type="button" variant="ghost">
           Cancel
