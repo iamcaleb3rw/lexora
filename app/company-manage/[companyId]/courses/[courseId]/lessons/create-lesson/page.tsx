@@ -25,12 +25,13 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
+
 import axios from "axios";
 import { useParams } from "next/navigation";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
+import { SimpleEditor } from "@/components/tiptap-templates/simple/simple-editor";
 
 // ----------------------
 // Zod schema for dynamic lesson types
