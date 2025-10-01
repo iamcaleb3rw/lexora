@@ -1,5 +1,4 @@
 import { getLessonById } from "@/app/actions/getLessonById";
-import { ScrollProgress } from "@/components/magicui/scroll-progress";
 
 import React from "react";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import Link from "next/link";
 import { courses } from "@/src/db/schema";
 import VideoPlayer from "@/components/VideoPlayer";
 import { Rank } from "@/components/Rank";
+import { ScrollProgress } from "@/components/ui/scroll-progress";
 
 const LessonIdPage = async ({
   params,
@@ -57,8 +57,7 @@ const LessonIdPage = async ({
               />
               <hr />
               <div>
-                <h1>Submission Url</h1>
-                p
+                <h1>Submission Url</h1>p
               </div>
             </div>
           )}
