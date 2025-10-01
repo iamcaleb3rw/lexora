@@ -11,4 +11,7 @@ export const CompanyContext = createContext<CompanyContextType | undefined>(
 
 export const useCompany = () => {
   const context = useContext(CompanyContext);
+  if(context === undefined){
+    throw new Error("useCompany must be used")
+  }
 };

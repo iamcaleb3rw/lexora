@@ -111,6 +111,7 @@ export function AppSidebar() {
       <SidebarFooter>
         <div className="border p-2 shadow-xs rounded-xl">
           <h1 className="font-medium tracking-tight flex items-center">
+            
             Learning streak
           </h1>
           <div className="flex">

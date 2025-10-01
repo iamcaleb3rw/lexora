@@ -5,7 +5,7 @@ import { SidebarTrigger, useSidebar } from "./ui/sidebar";
 const Trigger = () => {
   const { state } = useSidebar();
   return (
-    <div className="absolute top-4 left-4">
+    <div className="absolute top-4 left-4 ">
       {state === "collapsed" && <SidebarTrigger />}
     </div>
   );
