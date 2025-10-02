@@ -5,7 +5,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 const LessonsSkeleton = () => {
   return (
-    <div className="p-10">
+    <div className="p-4 md:p-10">
       <div>
         {/* Course Title */}
         <Skeleton className="h-8 w-64 mb-2 bg-muted-foreground/20" />
