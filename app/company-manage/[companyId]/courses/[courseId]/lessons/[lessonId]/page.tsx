@@ -21,7 +21,7 @@ const LessonIdPage = async ({
   console.log(lesson);
   return (
     <div>
-      <div className="relative max-w-3xl mx-auto">
+      <div className="relative max-w-3xl mx-auto p-4 lg:p-0">
         {/* Fixed Header */}
         {lessonType === "text" && <ScrollProgress className="top-0 z-[999]" />}
 

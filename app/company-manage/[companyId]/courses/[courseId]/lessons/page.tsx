@@ -25,7 +25,7 @@ const Lessons = async ({
   const companyId = (await params).companyId;
   const lessonsNumber = course?.lessons.length;
   return (
-    <div className="p-10 ">
+    <div className="p-4 md:p-10 ">
       <div>
         <p className="font-semibold text-3xl">{course?.title}</p>
         <hr />
