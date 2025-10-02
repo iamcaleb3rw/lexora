@@ -7,7 +7,7 @@ import Link from "next/link";
 const Hero = () => {
   return (
     <div>
-      <div className="px-16 min-h-[350px] justify-center  flex gap-8 flex-col">
+      <div className="px-4 md:px-16 min-h-[350px] justify-center  flex gap-8 flex-col">
         <h1 className="text-3xl md:text-5xl font-medium tracking-tighter">
           Learn skills that get you hired. <br className="hidden md:block" />{" "}
           All in One Gamified Platform
@@ -17,8 +17,14 @@ const Hero = () => {
           and code challenges that actually get you hired.
         </h2>
         <div className="flex flex-col md:flex-row gap-2 items-center font-normal">
-          <Link href={"/workspace"} className="cursor-pointer">
-            <ThreeDButton text="Start learning today" />
+          <Link
+            href={"/workspace"}
+            className="cursor-pointer  border w-full md:max-w-[300px]"
+          >
+            <ThreeDButton
+              text="Start learning today"
+              className="w-full md:max-w-[300px]"
+            />
           </Link>
 
           <Button variant={"ghost"} size={"lg"}>

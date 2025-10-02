@@ -26,7 +26,7 @@ const logos = [
 
 const Trusted = () => {
   return (
-    <div className="flex my-4 flex-col gap-8 px-16">
+    <div className="flex items-center my-4 flex-col gap-8 px-16">
       <p className="font-medium text-muted-foreground ">
         Trusted by 1,200+ students and hirers
       </p>

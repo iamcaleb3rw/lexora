@@ -9,12 +9,12 @@ import Image from "next/image";
 
 const Steps = () => {
   return (
-    <div className="px-16 py-10 flex flex-col gap-12">
-      <div className="grid grid-cols-2">
-        <h1 className="text-3xl md:text-5xl max-w-[500px] col-span-full md:col-span-1 w-full font-medium tracking-tighter ">
+    <div className=" px-4 md:px-16 py-10 flex flex-col gap-12">
+      <div className="grid md:grid-cols-2">
+        <h1 className="text-3xl md:text-5xl md:max-w-[500px] col-span-full md:col-span-1 w-full font-medium tracking-tighter ">
           Made for ambitious learners and future tech professionals.
         </h1>
-        <div className="text-muted-foreground  md:max-w-[350px] md:w-full">
+        <div className="text-muted-foreground w-full max-w-full  md:max-w-[350px] md:w-full">
           Cognitio helps job seekers learn real tech skills faster and get hired
           quicker. Complete challenges designed by top companies, earn XP, and
           showcase your talent — all through a fun, gamified experience.
@@ -29,7 +29,7 @@ const Steps = () => {
           </span>
         </div>
       </div>
-      <div className="flex justify-evenly gap-3 place-items-center">
+      <div className="flex flex-wrap sm:flex-nowrap justify-evenly gap-3 place-items-center">
         <div className="w-full py-6 px-6 aspect-square bg-muted border  rounded-[30px]">
           <div className=" flex items-center gap-3">
             <div className="w-4 h-2 bg-blue-500 rounded-full"></div>
