@@ -40,7 +40,10 @@ const LessonIdPage = async ({
         {/* Content with padding to clear header */}
         <div className="pt-0">
           {lessonType === "text" && lesson?.lesson?.content && (
-            <div dangerouslySetInnerHTML={{ __html: lesson?.lesson.content }} />
+            <div
+              className="[&_h1]:text-2xl [&_h1]:font-bold [&_h1]:my-4 [&_h2]:text-xl [&_ul]:list-disc [&_ul]:ml-14 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:my-2 [&_li]:mb-1 [&_ul]:my-2 [&_h2]:font-semibold [&_h2]:my-3 [&_h3]:text-lg [&_h3]:font-medium [&_h3]:mb-2 [&_pre.code-block_code]:text-pink-600 [&_pre.code-block_code]:dark:text-lime-400 [&_pre.code-block_code]:font-mono [&_pre.code-block_code]:text-sm [&_pre.code-block]:bg-gray-50 [&_pre.code-block]:dark:bg-gray-900 [&_pre.code-block]:border [&_pre.code-block]:border-gray-200 [&_pre.code-block]:dark:border-gray-700 [&_pre.code-block]:p-4 [&_pre.code-block]:rounded-lg [&_pre.code-block]:my-4"
+              dangerouslySetInnerHTML={{ __html: lesson?.lesson.content }}
+            />
           )}
 
           {lessonType === "video" && lesson.lesson?.video_url && (

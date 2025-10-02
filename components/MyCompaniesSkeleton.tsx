@@ -2,7 +2,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 
 export default function MyCompaniesSkeleton() {
   return (
-    <div className="grid grid-cols-4 gap-3 p-3">
+    <div className="grid grid-cols-1 md:grid-cols-4 gap-3 p-3">
       {Array.from({ length: 4 }).map((_, i) => (
         <div
           key={i}

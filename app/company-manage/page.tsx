@@ -27,7 +27,7 @@ const MyCompanies = async () => {
   console.log("COMPANIES", companies);
   return (
     <div>
-      <div className="grid grid-cols-4 gap-3 p-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 p-3">
         {companies.map((company) => (
           <div
             key={company.id}
