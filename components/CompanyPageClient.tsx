@@ -38,7 +38,7 @@ const CompanyPageClient = ({ company }: CompanyPageClientProps) => {
       <div className="p-2 text-lg font-medium">
         <p>{company?.name}'s courses</p>
         {company?.courses.length ? (
-          <div className="grid grid-cols-4 gap-2">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
             {company.courses.map((course) => (
               <div
                 key={course.id}
