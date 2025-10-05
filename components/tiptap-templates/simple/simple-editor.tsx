@@ -164,7 +164,7 @@ export function SimpleEditor({
   return (
     <div
       className={cn(
-        "border rounded-lg bg-background w-full max-w-2xl",
+        "border rounded-lg bg-background w-full max-w-4xl",
         className
       )}
     >

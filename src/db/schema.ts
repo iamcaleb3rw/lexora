@@ -127,7 +127,6 @@ export const lessons = pgTable("lessons", {
   deliverables: text("deliverables"), // JSON stored as string for flexibility
   order: integer("order").notNull(),
   xp: integer("xp").default(10).notNull(),
-  isCompleted: boolean("isCompleted").default(false),
   created_at: timestamp("created_at").defaultNow(),
   evaluation_criteria: text("evaluation_criteria"),
   feedback: text("feedback"),

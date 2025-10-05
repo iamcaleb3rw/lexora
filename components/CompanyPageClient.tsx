@@ -61,7 +61,7 @@ const CompanyPageClient = ({ company }: CompanyPageClientProps) => {
                   </p>
                   <div className="">
                     <Link
-                      href={`/company-manage/${course.company_id}/courses/${course.id}`}
+                      href={`/company-manage/${course.company_id}/courses/${course.id}/lessons`}
                     >
                       <Button className="w-full">Open course</Button>
                     </Link>

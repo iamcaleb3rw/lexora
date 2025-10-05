@@ -3,7 +3,8 @@ import ArticleIcon from "@/components/ArticleIcon";
 import PlayIconCustom from "@/components/PlayIconCustom";
 import TerminalIcon from "@/components/TerminalIcon";
 import { ThreeDButton } from "@/components/ThreeDButton";
-import { HelpCircle } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ArrowUpRight, Edit, HelpCircle } from "lucide-react";
 import Link from "next/link";
 
 import React from "react";
@@ -45,15 +46,33 @@ const Lessons = async ({
               course.lessons.map((lesson) => {
                 const Icon = lessonTypeIcons[lesson.type] || HelpCircle;
                 return (
-                  <Link
-                    href={`/company-manage/${companyId}/courses/${courseId}/lessons/${lesson.id}`}
+                  <div
                     key={lesson.id}
+                    className="flex gap-2 items-center justify-between p-3 text-muted-foreground hover:bg-gray-50 transition"
                   >
-                    <div className="flex gap-2 items-center p-3 text-muted-foreground hover:bg-gray-50 transition">
-                      {" "}
-                      <Icon /> <p>{lesson.title}</p>{" "}
+                    {" "}
+                    <div className="flex gap-2 items-center">
+                      <Icon /> <p>{lesson.title}</p>
                     </div>
-                  </Link>
+                    <div className="flex gap-3 items-center">
+                      <Link
+                        href={`/company-manage/${companyId}/courses/${courseId}/lessons/${lesson.id}/update`}
+                      >
+                        <Button variant={"outline"} size={"icon"}>
+                          <Edit />
+                        </Button>
+                      </Link>
+                      <Link
+                        href={`/company-manage/${companyId}/courses/${courseId}/lessons/${lesson.id}`}
+                        key={lesson.id}
+                      >
+                        <Button size={"sm"}>
+                          Preview
+                          <ArrowUpRight />
+                        </Button>
+                      </Link>
+                    </div>
+                  </div>
                 );
               })
             ) : (

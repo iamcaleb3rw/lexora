@@ -1,84 +1,130 @@
 import { getLessonById } from "@/app/actions/getLessonById";
-
 import React from "react";
-import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { courses } from "@/src/db/schema";
-import VideoPlayer from "@/components/VideoPlayer";
+import { Button } from "@/components/ui/button";
 import { Rank } from "@/components/Rank";
 import { ScrollProgress } from "@/components/ui/scroll-progress";
+import VideoPlayer from "@/components/VideoPlayer";
 
 const LessonIdPage = async ({
   params,
 }: {
   params: Promise<{ lessonId: string; companyId: string; courseId: string }>;
 }) => {
-  const lessonId = (await params).lessonId;
-  const companyId = (await params).companyId;
-  const courseId = (await params).courseId;
+  // ─── Extract Params ──────────────────────────────────────────────
+  const { lessonId, companyId, courseId } = await params;
   const lesson = await getLessonById(Number(lessonId));
   const lessonType = lesson.lesson?.type;
+
+  // ─── Debugging ───────────────────────────────────────────────────
   console.log(lesson);
+
+  // ─── JSX ─────────────────────────────────────────────────────────
   return (
-    <div>
-      <div className="relative max-w-3xl mx-auto p-4 lg:p-0">
-        {/* Fixed Header */}
+    <div className="min-h-screen bg-background py-8">
+      <div className="relative max-w-3xl mx-auto px-4 lg:px-0">
+        {/* ─── Progress Bar (For Text Lessons) ─────────────────────── */}
         {lessonType === "text" && <ScrollProgress className="top-0 z-[999]" />}
 
-        <h1 className="text-xl flex items-center justify-between mb-4 py-4 sticky  top-0 left-0 w-full border-b bg-white font-semibold z-50">
-          {lesson?.lesson?.title}
+        {/* ─── Lesson Header ───────────────────────────────────────── */}
+        <header className="sticky top-0 left-0 z-50 flex items-center justify-between bg-white dark:bg-background border-b py-4 mb-6">
+          <h1 className="text-2xl font-bold tracking-tight">
+            {lesson?.lesson?.title}
+          </h1>
+
           {lesson.lesson?.difficulty_level && (
-            <div className="border shadow-xs flex rounded-full py-1 px-2 gap-3">
+            <div className="flex items-center gap-2 rounded-full border px-3 py-1 shadow-sm">
               <Rank rank={lesson.lesson?.difficulty_level} />
-              <p className="text-sm font-bold ">
+              <span className="text-sm font-semibold capitalize">
                 {lesson.lesson?.difficulty_level}
-              </p>
+              </span>
             </div>
           )}
-        </h1>
+        </header>
 
-        {/* Content with padding to clear header */}
-        <div className="pt-0">
+        {/* ─── Lesson Content ──────────────────────────────────────── */}
+        <main className="space-y-8">
+          {/* Text Lesson */}
           {lessonType === "text" && lesson?.lesson?.content && (
-            <div
-              className="[&_h1]:text-2xl [&_h1]:font-bold [&_h1]:my-4 [&_h2]:text-xl [&_ul]:list-disc [&_ul]:ml-14 [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:my-2 [&_li]:mb-1 [&_ul]:my-2 [&_h2]:font-semibold [&_h2]:my-3 [&_h3]:text-lg [&_h3]:font-medium [&_h3]:mb-2 [&_pre.code-block_code]:text-pink-600 [&_pre.code-block_code]:dark:text-lime-400 [&_pre.code-block_code]:font-mono [&_pre.code-block_code]:text-sm [&_pre.code-block]:bg-gray-50 [&_pre.code-block]:dark:bg-gray-900 [&_pre.code-block]:border [&_pre.code-block]:border-gray-200 [&_pre.code-block]:dark:border-gray-700 [&_pre.code-block]:p-4 [&_pre.code-block]:rounded-lg [&_pre.code-block]:my-4"
-              dangerouslySetInnerHTML={{ __html: lesson?.lesson.content }}
+            <article
+              className="prose dark:prose-invert max-w-none
+              [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:my-4
+              [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:my-3
+              [&_h3]:text-lg [&_h3]:font-medium [&_h3]:mb-2
+              [&_ul]:list-disc [&_ul]:ml-8 [&_ul]:my-2
+              [&_ol]:list-decimal [&_ol]:ml-8 [&_ol]:my-2
+              [&_pre.code-block]:bg-muted [&_pre.code-block]:border [&_pre.code-block]:p-4 [&_pre.code-block]:rounded-lg [&_pre.code-block]:my-4
+              [&_pre.code-block_code]:font-mono [&_pre.code-block_code]:text-sm"
+              dangerouslySetInnerHTML={{ __html: lesson.lesson.content }}
             />
           )}
 
+          {/* Video Lesson */}
           {lessonType === "video" && lesson.lesson?.video_url && (
-            <VideoPlayer videoUrl={lesson.lesson.video_url} />
+            <section className="space-y-4">
+              <VideoPlayer videoUrl={lesson.lesson.video_url} />
+            </section>
           )}
 
-          {lessonType === "project" && lesson.lesson?.deliverables && (
-            <div>
-              <div
-                className="prose"
-                dangerouslySetInnerHTML={{
-                  __html: lesson?.lesson.deliverables,
-                }}
-              />
-              <hr />
-              <div>
-                <h1>Submission Url</h1>p
-              </div>
-            </div>
-          )}
-        </div>
-        {lesson.nextLesson ? (
-          <Link
-            className="w-full cursor-pointer"
-            href={`/company-manage/${companyId}/courses/${courseId}/lessons/${lesson.nextLesson?.id}`}
-          >
-            <Button className="w-full mt-6 cursor-pointer">
-              Complete and proceed to: {lesson.nextLesson.title}
+          {/* Project Lesson */}
+          {lessonType === "project" &&
+            lesson.lesson?.deliverables &&
+            lesson.lesson?.evaluation_criteria && (
+              <section className="space-y-6">
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">Deliverables</h2>
+                  <article
+                    className="prose dark:prose-invert"
+                    dangerouslySetInnerHTML={{
+                      __html: lesson.lesson.deliverables,
+                    }}
+                  />
+                </div>
+
+                <div>
+                  <h2 className="text-xl font-semibold mb-2">
+                    Evaluation Criteria
+                  </h2>
+                  <article
+                    className="prose dark:prose-invert"
+                    dangerouslySetInnerHTML={{
+                      __html: lesson.lesson.evaluation_criteria,
+                    }}
+                  />
+                </div>
+
+                {lesson.lesson.submission_url && (
+                  <div className="border-t pt-4">
+                    <h3 className="text-lg font-medium mb-1">Submission URL</h3>
+                    <Link
+                      href={lesson.lesson.submission_url}
+                      target="_blank"
+                      className="text-primary underline hover:text-primary/80 break-all"
+                    >
+                      {lesson.lesson.submission_url}
+                    </Link>
+                  </div>
+                )}
+              </section>
+            )}
+        </main>
+
+        {/* ─── Footer Action Buttons ──────────────────────────────── */}
+        <footer className="mt-10">
+          {lesson.nextLesson ? (
+            <Link
+              href={`/company-manage/${companyId}/courses/${courseId}/lessons/${lesson.nextLesson?.id}`}
+            >
+              <Button className="w-full">
+                Complete and proceed to: {lesson.nextLesson.title}
+              </Button>
+            </Link>
+          ) : (
+            <Button className="w-full bg-green-500 hover:bg-green-600 text-background">
+              Mark course as complete
             </Button>
-          </Link>
-        ) : (
-          <Button className="w-full bg-green-400 text-background hover:bg-green-500 mt-6 cursor-pointer">
-            Mark course as complete
-          </Button>
-        )}
+          )}
+        </footer>
       </div>
     </div>
   );

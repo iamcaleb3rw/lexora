@@ -18,12 +18,15 @@ const LessonsSkeleton = () => {
           <div className="bg-white shadow-xs border rounded-lg overflow-hidden divide-y divide-gray-200">
             {/* Fake Lessons */}
             {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="flex gap-2 items-center p-3 text-muted-foreground"
-              >
-                <Skeleton className="h-5 w-5 rounded bg-muted-foreground/15" />
-                <Skeleton className="h-4 w-48 bg-muted-foreground/15" />
+              <div key={i} className="flex items-center justify-between p-3 ">
+                <div className="flex gap-2 items-center">
+                  <Skeleton className="h-5 w-5 rounded bg-muted-foreground/15" />
+                  <Skeleton className="h-4 w-48 bg-muted-foreground/15" />
+                </div>
+                <div className="flex items-center gap-3">
+                  <Skeleton className="size-6 rounded-md  bg-muted-foreground/15" />
+                  <Skeleton className="h-6 w-20 rounded-md  bg-muted-foreground/15" />
+                </div>
               </div>
             ))}
           </div>
