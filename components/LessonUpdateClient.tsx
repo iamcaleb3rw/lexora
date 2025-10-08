@@ -33,9 +33,12 @@ import type { GetLessonByIdResponse } from "@/app/company-manage/[companyId]/cou
 import { SimpleEditor } from "./tiptap-templates/simple/simple-editor";
 import axios from "axios";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 interface LessonUpdateClientProps {
   lesson: GetLessonByIdResponse;
+  courseId: string;
+  companyId: string;
 }
 
 const difficulties: { value: Difficulty; label: string }[] = [
@@ -53,8 +56,12 @@ const lessonTypes: { value: LessonType; label: string }[] = [
 
 export default function LessonUpdateClient({
   lesson,
+  courseId,
+  companyId,
 }: LessonUpdateClientProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const router = useRouter();
 
   const form = useForm<LessonFormData>({
     resolver: zodResolver(lessonSchema),
@@ -122,6 +129,9 @@ export default function LessonUpdateClient({
 
       if (response.status === 200) {
         toast.success("Lesson updated successfully!");
+        router.push(
+          `/company-manage/${companyId}/courses/${courseId}/lessons/${lesson.lesson?.id}`
+        );
       } else {
         toast.error("Something went wrong while updating the lesson.");
       }
@@ -307,7 +317,7 @@ export default function LessonUpdateClient({
                       type="url"
                       placeholder="https://example.com/video"
                       {...field}
-                      className="h-11"
+                      className="h-11 shadow-none bg-white"
                     />
                   </FormControl>
                   <FormDescription>

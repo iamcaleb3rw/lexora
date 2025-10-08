@@ -16,17 +16,11 @@ const LessonIdPage = async ({
   const lesson = await getLessonById(Number(lessonId));
   const lessonType = lesson.lesson?.type;
 
-  // ─── Debugging ───────────────────────────────────────────────────
-  console.log(lesson);
-
-  // ─── JSX ─────────────────────────────────────────────────────────
   return (
     <div className="min-h-screen bg-background py-8">
       <div className="relative max-w-3xl mx-auto px-4 lg:px-0">
-        {/* ─── Progress Bar (For Text Lessons) ─────────────────────── */}
         {lessonType === "text" && <ScrollProgress className="top-0 z-[999]" />}
 
-        {/* ─── Lesson Header ───────────────────────────────────────── */}
         <header className="sticky top-0 left-0 z-50 flex items-center justify-between bg-white dark:bg-background border-b py-4 mb-6">
           <h1 className="text-2xl font-bold tracking-tight">
             {lesson?.lesson?.title}
@@ -42,7 +36,6 @@ const LessonIdPage = async ({
           )}
         </header>
 
-        {/* ─── Lesson Content ──────────────────────────────────────── */}
         <main className="space-y-8">
           {/* Text Lesson */}
           {lessonType === "text" && lesson?.lesson?.content && (
@@ -66,7 +59,6 @@ const LessonIdPage = async ({
             </section>
           )}
 
-          {/* Project Lesson */}
           {lessonType === "project" &&
             lesson.lesson?.deliverables &&
             lesson.lesson?.evaluation_criteria && (
@@ -109,7 +101,6 @@ const LessonIdPage = async ({
             )}
         </main>
 
-        {/* ─── Footer Action Buttons ──────────────────────────────── */}
         <footer className="mt-10">
           {lesson.nextLesson ? (
             <Link

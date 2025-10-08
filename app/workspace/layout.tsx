@@ -8,7 +8,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <SidebarProvider>
       <AppSidebar />
       <main className="w-full">
-        <div className="border-b py-2 bg-white flex justify-end px-4  sticky top-0">
+        <div className="border-b z-[99]  py-2 bg-white flex justify-end px-4  sticky top-0">
           <ThreeDButton text="New case" className="h-8 self-end" />
         </div>
 
