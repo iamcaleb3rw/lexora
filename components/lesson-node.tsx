@@ -1,17 +1,14 @@
 "use client";
 
-import type React from "react";
-import { useState } from "react";
+import React, { useState } from "react";
 import { Check, Book, Play, FileText, Code, Lock } from "lucide-react";
 import { cn } from "@/lib/utils";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { motion } from "framer-motion";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
 
 interface Lesson {
   id: number;
@@ -38,128 +35,103 @@ const lessonIcons: Record<Lesson["type"], React.ElementType> = {
 
 export function LessonNode({ lesson, position }: LessonNodeProps) {
   const [isOpen, setIsOpen] = useState(false);
-
   const Icon = lessonIcons[lesson.type];
   const isCompleted = lesson.status === "completed";
   const isCurrent = lesson.status === "current";
   const isLocked = lesson.status === "locked";
 
-  const buttonColors = cn(
-    "relative flex h-16 w-16 items-center justify-center rounded-full border-2 transition-all duration-300 ease-out",
-    "shadow-[0_4px_0_#1a1a1a,0_0_12px_rgba(0,0,0,0.5)]",
-    "active:translate-y-[3px] active:shadow-[inset_0_3px_8px_rgba(0,0,0,0.6)]",
-    isLocked &&
-      "border-neutral-700 bg-gradient-to-b from-neutral-700 to-neutral-800 text-neutral-500 cursor-not-allowed",
-    isCurrent &&
-      "border-[oklch(0.58_0.22_264)] bg-gradient-to-b from-[#1CB0F6] to-[#168DC5] shadow-[0_0_16px_oklch(0.58_0.22_264)/0.5]",
-    isCompleted &&
-      "border-emerald-500 bg-gradient-to-b from-emerald-600 to-emerald-700 shadow-[0_0_14px_rgba(16,185,129,0.5)]",
-    !isLocked &&
-      !isCurrent &&
-      !isCompleted &&
-      "border-gray-600 bg-gradient-to-b from-gray-700 to-gray-800"
-  );
-
   return (
-    <>
-      <div className="relative z-10">
+    <Popover open={isOpen} onOpenChange={setIsOpen}>
+      <PopoverTrigger asChild>
         <motion.button
           disabled={isLocked}
-          onClick={() => !isLocked && setIsOpen(true)}
-          whileHover={{ scale: isLocked ? 1 : 1.06 }}
+          whileHover={{ scale: isLocked ? 1 : 1.02 }}
           whileTap={{
-            scale: isLocked ? 1 : 0.85,
-            y: 2,
-            transition: { type: "spring", stiffness: 500, damping: 20 },
+            scale: isLocked ? 1 : 0.96,
+            y: 4,
+            transition: { type: "spring", stiffness: 600, damping: 25 },
           }}
           className={cn(
-            "relative flex h-16 w-16 items-center justify-center rounded-full border-2 transition-all duration-200 ease-out",
-            "shadow-[0_6px_0_#1a1a1a,0_0_12px_rgba(0,0,0,0.5)]",
+            "relative flex  h-12 w-12 items-center justify-center rounded-full transition-all duration-150 ease-out",
             isLocked &&
-              "border-neutral-700 bg-gradient-to-b from-neutral-700 to-neutral-800 text-neutral-500 cursor-not-allowed",
+              "bg-gradient-to-b from-[#4a4a4a] via-[#3a3a3a] to-[#2a2a2a] shadow-[0_5px_0_0_#1a1a1a,0_6px_8px_rgba(0,0,0,0.4)] cursor-not-allowed",
             isCurrent &&
-              "border-[oklch(0.58_0.22_264)] bg-gradient-to-b from-[#1CB0F6] to-[#168DC5] shadow-[0_0_18px_oklch(0.58_0.22_264)/0.5]",
+              "bg-gradient-to-b from-[#60a5fa] via-[#3b82f6] to-[#2563eb] shadow-[0_5px_0_0_#1e40af,0_6px_12px_rgba(59,130,246,0.5),inset_0_1px_0_rgba(255,255,255,0.4)]",
             isCompleted &&
-              "border-emerald-500 bg-gradient-to-b from-emerald-600 to-emerald-700 shadow-[0_0_16px_rgba(16,185,129,0.5)]",
+              "bg-gradient-to-b from-[#4ade80] via-[#22c55e] to-[#16a34a] shadow-[0_5px_0_0_#15803d,0_6px_12px_rgba(34,197,94,0.5),inset_0_1px_0_rgba(255,255,255,0.4)]",
             !isLocked &&
               !isCurrent &&
               !isCompleted &&
-              "border-gray-600 bg-gradient-to-b from-gray-700 to-gray-800"
+              "bg-gradient-to-b from-[#6a6a6a] via-[#5a5a5a] to-[#4a4a4a] shadow-[0_5px_0_0_#2a2a2a,0_6px_8px_rgba(0,0,0,0.3),inset_0_1px_0_rgba(255,255,255,0.2)]",
+            "active:translate-y-[4px] active:shadow-[0_1px_0_0_#1a1a1a,0_2px_4px_rgba(0,0,0,0.4)]"
           )}
         >
-          {/* Mechanical top layer */}
-          <div className="absolute inset-0 rounded-full bg-gradient-to-t from-white/5 to-transparent shadow-inner" />
+          <div
+            className={cn(
+              "absolute inset-x-2 top-1 h-4 rounded-t-md bg-gradient-to-b from-white/40 to-transparent blur-[1px]",
+              isLocked && "from-white/10"
+            )}
+          />
+          <div className="absolute inset-0 rounded-lg " />
 
-          {/* Icon */}
           <motion.div
             key={lesson.status}
-            initial={{ scale: 0.8 }}
-            animate={{ scale: 1 }}
+            initial={{ scale: 0.8, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
             transition={{ type: "spring", stiffness: 400, damping: 20 }}
+            className="relative z-10"
           >
             {isCompleted && (
-              <Check className="h-6 w-6 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
+              <Check className="h-6 w-6 text-white drop-shadow" />
             )}
-            {isCurrent && (
-              <Icon className="h-7 w-7 text-white drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]" />
-            )}
+            {isCurrent && <Icon className="h-7 w-7 text-white drop-shadow" />}
             {isLocked && (
-              <Lock className="h-6 w-6 text-neutral-400 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]" />
+              <Lock className="h-6 w-6 text-[#2a2a2a] drop-shadow" />
+            )}
+            {!isLocked && !isCurrent && !isCompleted && (
+              <Icon className="h-6 w-6 text-[#2a2a2a] drop-shadow" />
             )}
           </motion.div>
 
-          {/* LED halo */}
-          {!isLocked && (
-            <span
-              className={cn(
-                "absolute inset-0 rounded-full blur-md opacity-50 transition-all duration-300",
-                isCurrent && "bg-[oklch(0.58_0.22_264)/0.6] animate-pulse",
-                isCompleted && "bg-emerald-400/40",
-                !isCurrent && !isCompleted && "bg-cyan-300/10"
-              )}
-            />
+          {isCurrent && (
+            <span className="absolute -inset-1 rounded-lg bg-blue-400/20 blur-md" />
+          )}
+          {isCompleted && (
+            <span className="absolute -inset-1 rounded-lg bg-green-400/20 blur-md" />
           )}
         </motion.button>
-      </div>
+      </PopoverTrigger>
 
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogContent className="sm:max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Icon className="h-5 w-5" />
-              {lesson.title}
-            </DialogTitle>
-            <DialogDescription>
-              {isCompleted && "You've completed this lesson!"}
-              {isCurrent && "Ready to start this lesson?"}
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="flex items-center justify-between rounded-lg bg-muted p-4">
-              <span className="text-sm font-medium">Lesson Type</span>
-              <span className="text-sm capitalize text-muted-foreground">
-                {lesson.type}
-              </span>
-            </div>
-            <div className="flex items-center justify-between rounded-lg bg-muted p-4">
-              <span className="text-sm font-medium">XP Reward</span>
-              <span className="text-sm font-bold text-primary">
-                +{lesson.xp} XP
-              </span>
-            </div>
-            {isCurrent && (
-              <button className="w-full rounded-lg bg-primary px-4 py-3 font-semibold text-primary-foreground transition-colors hover:bg-primary/90">
-                Start Lesson
-              </button>
-            )}
-            {isCompleted && (
-              <button className="w-full rounded-lg border border-border bg-background px-4 py-3 font-semibold transition-colors hover:bg-muted">
-                Review Lesson
-              </button>
-            )}
+      <PopoverContent className="sm:max-w-xs">
+        <div className="space-y-4">
+          <div className="flex items-center justify-between rounded-lg bg-muted p-4">
+            <span className="text-sm font-medium">Lesson</span>
+            <span className="text-sm font-semibold">{lesson.title}</span>
           </div>
-        </DialogContent>
-      </Dialog>
-    </>
+          <div className="flex items-center justify-between rounded-lg bg-muted p-4">
+            <span className="text-sm font-medium">Type</span>
+            <span className="text-sm capitalize text-muted-foreground">
+              {lesson.type}
+            </span>
+          </div>
+          <div className="flex items-center justify-between rounded-lg bg-muted p-4">
+            <span className="text-sm font-medium">XP Reward</span>
+            <span className="text-sm font-bold text-primary">
+              +{lesson.xp} XP
+            </span>
+          </div>
+          {isCurrent && (
+            <button className="w-full rounded-lg bg-primary px-4 py-2 font-semibold text-primary-foreground hover:bg-primary/90 transition">
+              Start Lesson
+            </button>
+          )}
+          {isCompleted && (
+            <button className="w-full rounded-lg border border-border bg-background px-4 py-2 font-semibold hover:bg-muted transition">
+              Review Lesson
+            </button>
+          )}
+        </div>
+      </PopoverContent>
+    </Popover>
   );
 }
