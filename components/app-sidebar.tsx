@@ -1,3 +1,4 @@
+"use client";
 import {
   Sidebar,
   SidebarContent,
@@ -29,8 +30,25 @@ import {
   Sun,
 } from "lucide-react";
 import { Progress } from "./ui/progress";
+import { authClient } from "@/lib/auth-client";
+import { useRouter } from "next/navigation";
 
 export function AppSidebar() {
+  const router = useRouter();
+  const { data: session } = authClient.useSession();
+  if (!session) {
+    return router.push("/login");
+  }
+
+  const logOut = async () => {
+    await authClient.signOut({
+      fetchOptions: {
+        onSuccess: () => {
+          router.push("/login");
+        },
+      },
+    });
+  };
   return (
     <Sidebar>
       <SidebarHeader className="flex flex-row justify-between items-center">
@@ -40,15 +58,15 @@ export function AppSidebar() {
               className="w-full flex-1 flex items-center justify-between font-semibold text-sm px-2 py-1 h-fit"
               variant="ghost"
             >
-              Caleb Ishimwe
+              {session.user.name}
               <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent className="min-w-(--radix-dropdown-menu-trigger-width)">
             <DropdownMenuGroup className="px-2 font-medium text-sm">
-              <p>Caleb Ishimwe</p>
-              <p className="text-muted-foreground">icaleb130@gmail.com</p>
+              <p>{session.user.name}</p>
+              <p className="text-muted-foreground">{session.user.email}</p>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup className="font-medium">
@@ -63,7 +81,7 @@ export function AppSidebar() {
                   COMING SOON
                 </span>
               </DropdownMenuItem>
-              <DropdownMenuItem>
+              <DropdownMenuItem onClick={logOut}>
                 <LogOut className="size-4" />
                 Logout
               </DropdownMenuItem>
