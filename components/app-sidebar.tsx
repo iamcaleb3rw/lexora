@@ -32,12 +32,19 @@ import {
 import { Progress } from "./ui/progress";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export function AppSidebar() {
   const router = useRouter();
   const { data: session } = authClient.useSession();
+  useEffect(() => {
+    if (!session) {
+      router.push("/login");
+    }
+  }, [session, router]);
+
   if (!session) {
-    return router.push("/login");
+    return null;
   }
 
   const logOut = async () => {
