@@ -17,8 +17,10 @@ const Workspace = () => {
           Welcome, {session?.user.name}
         </p>
       </div>
-      <div className="lg:ml-12">
-        <CourseCarousel />
+      <div>
+        <div className="lg:ml-12">
+          <CourseCarousel />
+        </div>
       </div>
     </div>
   );
