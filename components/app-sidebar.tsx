@@ -33,33 +33,12 @@ import { Progress } from "./ui/progress";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
-
-export function AppSidebar() {
+type AppSidebarProps = {
+  username: string;
+  email: string;
+};
+export function AppSidebar({ username, email }: AppSidebarProps) {
   const router = useRouter();
-  const { data: session } = authClient.useSession();
-  useEffect(() => {
-    if (!session) {
-      router.push("/login");
-    }
-  }, [session, router]);
-
-  if (!session) {
-    return (
-      <div className="h-screen w-[15rem] border p-3 space-y-4">
-        {/* Shimmering logo placeholder */}
-        <div className="h-5 w-32 rounded bg-gray-300 animate-pulse"></div>
-
-        {/* Menu items placeholders */}
-        <div className="space-y-3 mt-4">
-          <div className="h-5 w-full rounded-sm bg-gray-300 animate-pulse"></div>
-          <div className="h-5 w-full rounded-sm bg-gray-300 animate-pulse"></div>
-          <div className="h-5 w-full rounded-sm bg-gray-300 animate-pulse"></div>
-          <div className="h-5 w-full rounded-sm bg-gray-300 animate-pulse"></div>
-          <div className="h-5 w-full rounded-sm bg-gray-300 animate-pulse"></div>
-        </div>
-      </div>
-    );
-  }
 
   const logOut = async () => {
     await authClient.signOut({
@@ -79,15 +58,15 @@ export function AppSidebar() {
               className="w-full flex-1 flex items-center justify-between font-semibold text-sm px-2 py-1 h-fit"
               variant="ghost"
             >
-              {session.user.name}
+              {username}
               <ChevronDown className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
 
           <DropdownMenuContent className="min-w-(--radix-dropdown-menu-trigger-width)">
             <DropdownMenuGroup className="px-2 font-medium text-sm">
-              <p>{session.user.name}</p>
-              <p className="text-muted-foreground">{session.user.email}</p>
+              <p>{username}</p>
+              <p className="text-muted-foreground">{email}</p>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuGroup className="font-medium">
