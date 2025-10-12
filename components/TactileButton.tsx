@@ -5,6 +5,7 @@ type TactileButtonProps = {
   isLocked?: boolean;
   isCompleted?: boolean;
   isCurrent?: boolean;
+  disabled: boolean;
   Icon?: React.ElementType;
   onClick?: () => void;
 };
@@ -15,6 +16,7 @@ export function TactileButton({
   isCurrent,
   Icon,
   onClick,
+  disabled
 }: TactileButtonProps) {
   const base =
     "relative flex items-center justify-center h-14 w-14 rounded-full transition-all duration-150 active:scale-95 select-none";
