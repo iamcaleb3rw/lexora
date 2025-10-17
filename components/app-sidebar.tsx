@@ -20,11 +20,16 @@ import {
 
 import { Button } from "./ui/button";
 import {
+  Archive,
+  Bookmark,
   ChevronDown,
   FolderOpen,
   Home,
+  LayoutList,
   LogOut,
   NotebookText,
+  Paperclip,
+  ScrollText,
   Search,
   Settings,
   Sun,
@@ -98,16 +103,28 @@ export function AppSidebar({ username, email }: AppSidebarProps) {
               Home
             </SidebarMenuItem>
             <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-              <FolderOpen className="size-4" />
-              Journeys
-            </SidebarMenuItem>
-            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-              <NotebookText className="size-4" />
-              Notes
-            </SidebarMenuItem>
-            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
               <Search className="size-4" />
               Search
+            </SidebarMenuItem>
+            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
+              <FolderOpen className="size-4" />
+              Courses
+            </SidebarMenuItem>
+            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
+              <LayoutList className="size-4" />
+              Job Board
+            </SidebarMenuItem>
+            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
+              <Archive className="size-4" />
+              My Applications
+            </SidebarMenuItem>
+            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
+              <Bookmark className="size-4" />
+              Bookmarks
+            </SidebarMenuItem>
+            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
+              <ScrollText className="size-4" />
+              Resumé
             </SidebarMenuItem>
           </SidebarMenu>
         </SidebarGroup>
