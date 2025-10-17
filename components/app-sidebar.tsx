@@ -25,6 +25,7 @@ import {
   ChevronDown,
   FolderOpen,
   Home,
+  Layers,
   LayoutList,
   LogOut,
   NotebookText,
@@ -115,7 +116,7 @@ export function AppSidebar({ username, email }: AppSidebarProps) {
               Job Board
             </SidebarMenuItem>
             <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-              <Archive className="size-4" />
+              <Layers className="size-4" />
               My Applications
             </SidebarMenuItem>
             <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">

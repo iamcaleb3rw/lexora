@@ -182,29 +182,6 @@
 }
 
 /* --- Custom thin scrollbar --- */
-.styled-scrollbar::-webkit-scrollbar {
-  height: 6px;
-}
-
-.styled-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.styled-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(120, 120, 120, 0.35);
-  border-radius: 9999px;
-  transition: background-color 0.2s ease;
-}
-
-.styled-scrollbar::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(120, 120, 120, 0.55);
-}
-
-/* Firefox */
-.styled-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(120, 120, 120, 0.35) transparent;
-}
 
 .shimmer::after {
   content: "";

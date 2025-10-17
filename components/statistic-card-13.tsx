@@ -39,7 +39,7 @@ export default function StatisticCard13() {
             </span>
           </CardTitle>
           <CardToolbar>
-            <DropdownMenu>
+            <DropdownMenu modal={false}>
               <DropdownMenuTrigger asChild>
                 <Button
                   size="icon"
