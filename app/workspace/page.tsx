@@ -1,16 +1,22 @@
 "use client";
 import StatisticCard13 from "@/components/statistic-card-13";
 import StatisticCard3 from "@/components/statistic-card-3";
+import { SidebarTrigger } from "@/components/TriggerButton";
+import { Button } from "@/components/ui/button";
 import { CourseCarousel } from "@/components/ui/course-carousel";
-import { SidebarTrigger, useSidebar } from "@/components/ui/sidebar";
+import { useSidebar } from "@/components/ui/sidebar";
 import { authClient } from "@/lib/auth-client";
+import { cn } from "@/lib/utils";
+import { ChevronsLeft, PanelRight } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useEffect } from "react";
 
 const Workspace = () => {
   const { data: session, isPending } = authClient.useSession();
-  const { state } = useSidebar();
+  const { state, isMobile, openMobile, setOpenMobile, toggleSidebar } =
+    useSidebar();
   const router = useRouter();
+
   useEffect(() => {
     if (isPending) return;
     if (!session) {
@@ -21,9 +27,7 @@ const Workspace = () => {
 
   return (
     <div className="p-2">
-      {state === "collapsed" && (
-        <SidebarTrigger className="fixed top-2 left-1 md:left-2 z-40" />
-      )}
+      <SidebarTrigger />
       <div>
         <p className="md:mx-14 my-2 text-lg font-medium">
           Welcome, {session?.user.name}
