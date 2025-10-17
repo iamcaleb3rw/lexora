@@ -20,7 +20,7 @@ const Workspace = () => {
   console.log(state);
 
   return (
-    <div className="">
+    <div className="p-2">
       {state === "collapsed" && (
         <SidebarTrigger className="fixed top-2 left-1 md:left-2 z-40" />
       )}
