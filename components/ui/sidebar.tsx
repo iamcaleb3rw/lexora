@@ -187,7 +187,7 @@ function Sidebar({
           data-sidebar="sidebar"
           data-slot="sidebar"
           data-mobile="true"
-          className="bg-sidebar text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
+          className="bg-sidebar z-[99999999] text-sidebar-foreground w-(--sidebar-width) p-0 [&>button]:hidden"
           style={
             {
               "--sidebar-width": SIDEBAR_WIDTH_MOBILE,
@@ -218,14 +218,15 @@ function Sidebar({
       <div
         data-slot="sidebar-gap"
         className={cn(
-          "relative w-(--sidebar-width) bg-transparent transition-[width] duration-150 ease-in",
-          "group-data-[collapsible=offcanvas]:w-0",
+          "relative w-(--sidebar-width) bg-transparent transition-all duration-500 ease-in-out opacity-100",
+          "group-data-[collapsible=offcanvas]:w-0 group-data-[collapsible=offcanvas]:opacity-0",
           "group-data-[side=right]:rotate-180",
           variant === "floating" || variant === "inset"
-            ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))]"
-            : "group-data-[collapsible=icon]:w-(--sidebar-width-icon)"
+            ? "group-data-[collapsible=icon]:w-[calc(var(--sidebar-width-icon)+(--spacing(4)))] group-data-[collapsible=icon]:opacity-60"
+            : "group-data-[collapsible=icon]:w-(--sidebar-width-icon) group-data-[collapsible=icon]:opacity-60"
         )}
       />
+
       <div
         data-slot="sidebar-container"
         className={cn(

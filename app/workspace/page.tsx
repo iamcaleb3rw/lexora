@@ -17,11 +17,12 @@ const Workspace = () => {
       router.push("/login");
     }
   }, [session, router, isPending]);
+  console.log(state);
 
   return (
     <div className="">
       {state === "collapsed" && (
-        <SidebarTrigger className="fixed top-2 left-2 z-[99999]" />
+        <SidebarTrigger className="fixed top-2 left-1 md:left-2 z-40" />
       )}
       <div>
         <p className="md:mx-14 my-2 text-lg font-medium">
@@ -36,7 +37,7 @@ const Workspace = () => {
           Keep the momentum going and complete your remaining courses
         </p>
         <hr className="md:mx-14 max-w-4xl mb-4" />
-        <div className="lg:ml-12">
+        <div className="md:ml-12">
           <CourseCarousel />
         </div>
         <hr className="my-2" />

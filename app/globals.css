@@ -182,7 +182,10 @@
 }
 
 /* --- Custom thin scrollbar --- */
-
+[data-slot="sidebar-container"],
+[data-slot="sidebar-gap"] {
+  transition: all 0.35s cubic-bezier(0.25, 0.1, 0.25, 1);
+}
 .shimmer::after {
   content: "";
   position: absolute;

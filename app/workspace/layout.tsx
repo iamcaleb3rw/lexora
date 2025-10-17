@@ -25,7 +25,7 @@ export default async function Layout({
     <SidebarProvider>
       <AppSidebar username={username} email={email} />
       <main className="w-full">
-        <div className="border-b z-[99]  py-2 bg-white flex justify-end px-4  sticky top-0">
+        <div className="border-b z-40  py-2 bg-transparent flex justify-end px-4  sticky top-0">
           <ThreeDButton text="New case" className="h-8 self-end" />
         </div>
 
