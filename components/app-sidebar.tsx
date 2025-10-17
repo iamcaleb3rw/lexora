@@ -4,6 +4,8 @@ import {
   SidebarContent,
   SidebarFooter,
   SidebarGroup,
+  SidebarGroupContent,
+  SidebarGroupLabel,
   SidebarHeader,
   SidebarMenu,
   SidebarMenuItem,
@@ -98,19 +100,36 @@ export function AppSidebar({ username, email }: AppSidebarProps) {
       </SidebarHeader>
       <SidebarContent>
         <SidebarGroup>
+          <SidebarGroupLabel className="font-medium text-xs p-0 m-0 text-orange-500">
+            Learning
+          </SidebarGroupLabel>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
+                <Home className="size-4" />
+                Home
+              </SidebarMenuItem>
+              <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
+                <Search className="size-4" />
+                Search
+              </SidebarMenuItem>
+              <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
+                <FolderOpen className="size-4" />
+                Courses
+              </SidebarMenuItem>
+
+              <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
+                <Bookmark className="size-4" />
+                Bookmarks
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroupContent>
+        </SidebarGroup>
+        <SidebarGroup>
+          <SidebarGroupLabel className="font-medium text-xs p-0 m-0 text-orange-500">
+            Job Seeking
+          </SidebarGroupLabel>
           <SidebarMenu>
-            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-              <Home className="size-4" />
-              Home
-            </SidebarMenuItem>
-            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-              <Search className="size-4" />
-              Search
-            </SidebarMenuItem>
-            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-              <FolderOpen className="size-4" />
-              Courses
-            </SidebarMenuItem>
             <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
               <LayoutList className="size-4" />
               Job Board
@@ -118,10 +137,6 @@ export function AppSidebar({ username, email }: AppSidebarProps) {
             <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
               <Layers className="size-4" />
               My Applications
-            </SidebarMenuItem>
-            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-              <Bookmark className="size-4" />
-              Bookmarks
             </SidebarMenuItem>
             <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
               <ScrollText className="size-4" />
