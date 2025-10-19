@@ -58,12 +58,14 @@ function CommandDialog({
           {/* Animated conic gradient halo */}
           <div
             className="absolute -inset-px rounded-2xl blur-2xl -z-10"
-            style={{
-              "--angle": "0deg",
-              background:
-                "conic-gradient(from var(--angle), #67e8f9, #38bdf8, #3b82f6, #4f46e5, #8b5cf6, #9333ea, #ec4899, #f43f5e, #f97316, #67e8f9)",
-              animation: "rotateGradient 20s linear infinite",
-            }}
+            style={
+              {
+                "--angle": "0deg",
+                background:
+                  "conic-gradient(from var(--angle), #67e8f9, #38bdf8, #3b82f6, #4f46e5, #8b5cf6, #9333ea, #ec4899, #f43f5e, #f97316, #67e8f9)",
+                animation: "rotateGradient 20s linear infinite",
+              } as any
+            }
           />
 
           {/* Foreground command box */}
