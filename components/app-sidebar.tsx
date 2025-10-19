@@ -41,6 +41,7 @@ import { Progress } from "./ui/progress";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import SpotlightSearch from "./Spotlight";
 type AppSidebarProps = {
   username: string;
   email: string;
@@ -111,7 +112,7 @@ export function AppSidebar({ username, email }: AppSidebarProps) {
               </SidebarMenuItem>
               <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
                 <Search className="size-4" />
-                Search
+                <SpotlightSearch />
               </SidebarMenuItem>
               <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
                 <FolderOpen className="size-4" />

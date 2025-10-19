@@ -1,17 +1,19 @@
-"use client"
+"use client";
 
-import * as React from "react"
-import { Command as CommandPrimitive } from "cmdk"
-import { SearchIcon } from "lucide-react"
+import * as React from "react";
+import { Command as CommandPrimitive } from "cmdk";
+import { SearchIcon } from "lucide-react";
 
-import { cn } from "@/lib/utils"
+import { cn } from "@/lib/utils";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
+  DialogOverlay,
   DialogTitle,
-} from "@/components/ui/dialog"
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
 function Command({
   className,
@@ -26,7 +28,7 @@ function Command({
       )}
       {...props}
     />
-  )
+  );
 }
 
 function CommandDialog({
@@ -35,8 +37,8 @@ function CommandDialog({
   children,
   ...props
 }: React.ComponentProps<typeof Dialog> & {
-  title?: string
-  description?: string
+  title?: string;
+  description?: string;
 }) {
   return (
     <Dialog {...props}>
@@ -44,13 +46,36 @@ function CommandDialog({
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription>{description}</DialogDescription>
       </DialogHeader>
-      <DialogContent className="overflow-hidden p-0 sm:max-w-lg [&>button:last-child]:hidden">
-        <Command className="[&_[cmdk-group-heading]]:text-muted-foreground max-h-[100svh] **:data-[slot=command-input-wrapper]:h-12 [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-2">
-          {children}
-        </Command>
+      <DialogTrigger className="text-sm font-medium w-full flex">
+        Search
+      </DialogTrigger>
+
+      {/* Glassmorphic overlay */}
+      <DialogOverlay className="bg-white/20 backdrop-blur-xs" />
+
+      <DialogContent className="sm:max-w-lg p-0 bg-transparent border-none overflow-visible [&>button:last-child]:hidden">
+        <div className="relative p-[2px] rounded-xl overflow-visible">
+          {/* Animated conic gradient halo */}
+          <div
+            className="absolute -inset-px rounded-2xl blur-2xl -z-10"
+            style={{
+              "--angle": "0deg",
+              background:
+                "conic-gradient(from var(--angle), #67e8f9, #38bdf8, #3b82f6, #4f46e5, #8b5cf6, #9333ea, #ec4899, #f43f5e, #f97316, #67e8f9)",
+              animation: "rotateGradient 20s linear infinite",
+            }}
+          />
+
+          {/* Foreground command box */}
+          <div className="rounded-xl bg-background/80 ring-1 ring-white/10 backdrop-blur-xl">
+            <Command className="[&_[cmdk-group-heading]]:text-muted-foreground max-h-[100svh] [&_[cmdk-group-heading]]:px-2 [&_[cmdk-group-heading]]:font-medium [&_[cmdk-group]]:px-2 [&_[cmdk-input]]:h-12 [&_[cmdk-item]]:px-3 [&_[cmdk-item]]:py-2">
+              {children}
+            </Command>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
-  )
+  );
 }
 
 function CommandInput({
@@ -72,7 +97,7 @@ function CommandInput({
         {...props}
       />
     </div>
-  )
+  );
 }
 
 function CommandList({
@@ -88,7 +113,7 @@ function CommandList({
       )}
       {...props}
     />
-  )
+  );
 }
 
 function CommandEmpty({
@@ -100,7 +125,7 @@ function CommandEmpty({
       className="py-6 text-center text-sm"
       {...props}
     />
-  )
+  );
 }
 
 function CommandGroup({
@@ -116,7 +141,7 @@ function CommandGroup({
       )}
       {...props}
     />
-  )
+  );
 }
 
 function CommandSeparator({
@@ -129,7 +154,7 @@ function CommandSeparator({
       className={cn("bg-border -mx-1 h-px", className)}
       {...props}
     />
-  )
+  );
 }
 
 function CommandItem({
@@ -145,7 +170,7 @@ function CommandItem({
       )}
       {...props}
     />
-  )
+  );
 }
 
 function CommandShortcut({
@@ -161,7 +186,7 @@ function CommandShortcut({
       )}
       {...props}
     />
-  )
+  );
 }
 
 export {
@@ -174,4 +199,4 @@ export {
   CommandList,
   CommandSeparator,
   CommandShortcut,
-}
+};

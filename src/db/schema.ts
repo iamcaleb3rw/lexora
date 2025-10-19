@@ -10,6 +10,7 @@ import {
   serial,
   pgEnum,
   primaryKey,
+  vector,
 } from "drizzle-orm/pg-core";
 
 export const lessonTypeEnum = pgEnum("lesson_type", [
@@ -110,6 +111,7 @@ export const courses = pgTable("courses", {
     .references(() => companies.id),
   is_published: boolean("is_published").default(false),
   created_at: timestamp("created_at").defaultNow(),
+  embedding: vector("embedding", { dimensions: 3072 }),
 });
 
 export const lessons = pgTable("lessons", {
@@ -131,6 +133,7 @@ export const lessons = pgTable("lessons", {
   evaluation_criteria: text("evaluation_criteria"),
   feedback: text("feedback"),
   submission_url: text("submission_url"),
+  embedding: vector("embedding", { dimensions: 3072 }),
 });
 
 export const badges = pgTable("badges", {
