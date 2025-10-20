@@ -20,6 +20,15 @@ async function main() {
 
   for (let i = 0; i < allLessons.length; i++) {
     const lesson = allLessons[i];
+
+    // Skip lessons that already have embeddings
+    if (lesson.embedding && lesson.embedding.length > 0) {
+      console.log(
+        `[SKIP] Lesson id=${lesson.id} already has an embedding, skipping.`
+      );
+      continue;
+    }
+
     let textToEmbed = `${lesson.title}\n${lesson.content || ""}`;
 
     // Check payload size
@@ -28,7 +37,6 @@ async function main() {
       console.warn(
         `[WARN] Lesson id=${lesson.id} exceeds payload limit (${payloadSize} bytes), truncating`
       );
-      // Truncate content until it fits
       let allowedLength = Math.floor(
         (MAX_PAYLOAD_BYTES - lesson.title.length) * 0.8
       );
