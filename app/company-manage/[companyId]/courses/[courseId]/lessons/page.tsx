@@ -84,7 +84,7 @@ const Lessons = async ({
                   href={`/company-manage/${companyId}/courses/${courseId}/lessons/create-lesson`}
                 >
                   <ThreeDButton
-                    text="Create Course +"
+                    text="Create Lesson +"
                     className=""
                   ></ThreeDButton>
                 </Link>
