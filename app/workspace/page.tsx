@@ -5,6 +5,7 @@ import { SidebarTrigger } from "@/components/TriggerButton";
 import { Button } from "@/components/ui/button";
 import { CourseCarousel } from "@/components/ui/course-carousel";
 import { useSidebar } from "@/components/ui/sidebar";
+import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { ChevronsLeft, PanelRight } from "lucide-react";
@@ -29,9 +30,14 @@ const Workspace = () => {
     <div className="p-2">
       <SidebarTrigger />
       <div>
-        <p className="md:mx-14 my-2 text-lg font-medium">
-          Welcome, {session?.user.name}
-        </p>
+        <div className="md:mx-14 my-2 flex gap-1 items-center text-lg font-medium">
+          Welcome,{" "}
+          {session ? (
+            <span>{session?.user.name}</span>
+          ) : (
+            <div className="h-5 w-40 animate-pulse bg-muted-foreground/10 rounded-full" />
+          )}
+        </div>
       </div>
       <div>
         <p className="md:mx-14 text-base font-medium">
