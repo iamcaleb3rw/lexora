@@ -5,6 +5,7 @@ import axios from "axios";
 import { Dialog, DialogContent } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Calendar, Calculator, Smile, Search, Command, X } from "lucide-react";
+import { TextShimmer } from "./ui/text-shimmer";
 
 type SearchResult = {
   id: number;
@@ -162,7 +163,9 @@ const SearchSkeleton = () => {
   return (
     <div className="flex flex-col h-full">
       <div className="px-4 py-3 border-b bg-muted/30 shrink-0">
-        <div className="text-sm font-medium">Searching...</div>
+        <div className="text-sm font-medium">
+          <TextShimmer duration={0.7}>Searching...</TextShimmer>
+        </div>
       </div>
       <div className="flex-1 overflow-y-auto py-1">
         {Array.from({ length: SKELETON_ITEMS }).map((_, index) => (
@@ -331,6 +334,17 @@ export default function SemanticSearchDialog() {
         >
           {/* Custom Header */}
           <div className="relative flex items-center border-b px-4 py-3 bg-muted/50">
+            <div
+              className="absolute -inset-px rounded-2xl blur-2xl -z-10"
+              style={
+                {
+                  "--angle": "0deg",
+                  background:
+                    "conic-gradient(from var(--angle), #67e8f9, #38bdf8, #3b82f6, #4f46e5, #8b5cf6, #9333ea, #ec4899, #f43f5e, #f97316, #67e8f9)",
+                  animation: "rotateGradient 20s linear infinite",
+                } as any
+              }
+            />
             <div className="flex items-center gap-2 flex-1 mr-10">
               <Search className="h-4 w-4 text-muted-foreground shrink-0" />
               <Input
@@ -345,17 +359,13 @@ export default function SemanticSearchDialog() {
             {/* Custom close button */}
             <button
               onClick={() => setOpen(false)}
-              className="absolute right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
+              className="absolute border bg-white right-3 top-1/2 -translate-y-1/2 p-1.5 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2"
             >
               <X className="h-4 w-4" />
               <span className="sr-only">Close</span>
             </button>
 
             {/* Keyboard shortcut badge */}
-            <div className="absolute right-12 top-1/2 -translate-y-1/2 flex items-center gap-1 text-xs text-muted-foreground">
-              <Command className="h-3 w-3" />
-              <span>J</span>
-            </div>
           </div>
 
           {/* Main Content Area */}
