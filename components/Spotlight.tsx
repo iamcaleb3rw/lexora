@@ -2,7 +2,12 @@
 
 import * as React from "react";
 import axios from "axios";
-import { Dialog, DialogContent } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogOverlay,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Calendar, Calculator, Smile, Search, Command, X } from "lucide-react";
 import { TextShimmer } from "./ui/text-shimmer";
@@ -252,7 +257,7 @@ const ResultItem = ({
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <div
           className={`w-2 h-2 rounded-full shrink-0 ${
-            result.type === "course" ? "bg-blue-500" : "bg-green-500"
+            result.type === "course" ? "bg-blue-500" : "bg-orange-500"
           }`}
         />
         <span className="truncate flex-1">{result.title}</span>
@@ -327,6 +332,8 @@ export default function SemanticSearchDialog() {
       `}</style>
 
       <Dialog open={open} onOpenChange={setOpen}>
+        <DialogTrigger className="font-medium text-sm">Search</DialogTrigger>
+        <DialogOverlay className="bg-white/40 backdrop-blur-[2px]" />
         <DialogContent
           className="p-0 gap-0 max-w-2xl overflow-hidden rounded-lg"
           style={{ height: DIALOG_HEIGHT }}
