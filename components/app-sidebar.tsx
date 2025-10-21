@@ -22,7 +22,6 @@ import {
 
 import { Button } from "./ui/button";
 import {
-  Archive,
   Bookmark,
   ChevronDown,
   FolderOpen,
@@ -30,8 +29,6 @@ import {
   Layers,
   LayoutList,
   LogOut,
-  NotebookText,
-  Paperclip,
   ScrollText,
   Search,
   Settings,
@@ -39,15 +36,18 @@ import {
 } from "lucide-react";
 import { Progress } from "./ui/progress";
 import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useRouter, usePathname } from "next/navigation";
 import SpotlightSearch from "./Spotlight";
+import Link from "next/link";
+
 type AppSidebarProps = {
   username: string;
   email: string;
 };
+
 export function AppSidebar({ username, email }: AppSidebarProps) {
   const router = useRouter();
+  const pathname = usePathname();
 
   const logOut = async () => {
     await authClient.signOut({
@@ -57,6 +57,30 @@ export function AppSidebar({ username, email }: AppSidebarProps) {
         },
       },
     });
+  };
+
+  const navItems = [
+    { icon: Home, label: "Home", path: "/workspace" },
+    { icon: Search, label: "Search", isSearch: true },
+    { icon: FolderOpen, label: "Courses", path: "/workspace/courses" },
+    { icon: Bookmark, label: "Bookmarks", path: "/workspace/bookmarks" },
+  ];
+
+  const jobItems = [
+    { icon: LayoutList, label: "Job Board", path: "/workspace/jobs" },
+    { icon: Layers, label: "My Applications", path: "/workspace/applications" },
+    { icon: ScrollText, label: "Resumé", path: "/workspace/cv" },
+  ];
+
+  const isActive = (path: string | undefined) => {
+    if (!path) return false;
+
+    if (path === "/workspace") {
+      return pathname === "/workspace";
+    }
+
+    // For other routes, match exact or nested paths
+    return pathname === path || pathname?.startsWith(`${path}/`);
   };
   return (
     <Sidebar>
@@ -99,54 +123,76 @@ export function AppSidebar({ username, email }: AppSidebarProps) {
         </DropdownMenu>
         <SidebarTrigger className="h-8 w-8" />
       </SidebarHeader>
+
       <SidebarContent>
+        {/* Learning Group */}
         <SidebarGroup>
           <SidebarGroupLabel className="font-medium text-xs p-0 m-0 text-orange-500">
             Learning
           </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu>
-              <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-                <Home className="size-4" />
-                Home
-              </SidebarMenuItem>
-              <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-                <Search className="size-4" />
-                <SpotlightSearch />
-              </SidebarMenuItem>
-              <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-                <FolderOpen className="size-4" />
-                Courses
-              </SidebarMenuItem>
-
-              <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-                <Bookmark className="size-4" />
-                Bookmarks
-              </SidebarMenuItem>
+              {navItems.map((item, i) => (
+                <SidebarMenuItem key={i}>
+                  {item.isSearch ? (
+                    <div className="flex items-center gap-2 px-2 py-1 rounded-sm text-sm font-medium">
+                      <item.icon className="size-4" />
+                      <SpotlightSearch />
+                    </div>
+                  ) : (
+                    <Link
+                      href={item.path!}
+                      className={`flex items-center gap-2 px-2 py-1 rounded-sm text-sm font-medium hover:bg-muted
+                        ${
+                          isActive(item.path)
+                            ? "bg-muted text-orange-500"
+                            : "text-foreground"
+                        }`}
+                    >
+                      <item.icon
+                        className={`size-4 ${
+                          isActive(item.path) ? "stroke-orange-500" : ""
+                        }`}
+                      />
+                      {item.label}
+                    </Link>
+                  )}
+                </SidebarMenuItem>
+              ))}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+
+        {/* Job Seeking Group */}
         <SidebarGroup>
           <SidebarGroupLabel className="font-medium text-xs p-0 m-0 text-orange-500">
             Job Seeking
           </SidebarGroupLabel>
-          <SidebarMenu>
-            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-              <LayoutList className="size-4" />
-              Job Board
-            </SidebarMenuItem>
-            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-              <Layers className="size-4" />
-              My Applications
-            </SidebarMenuItem>
-            <SidebarMenuItem className="flex items-center gap-2 px-2 py-1 rounded-sm hover:bg-muted text-sm font-medium">
-              <ScrollText className="size-4" />
-              Resumé
-            </SidebarMenuItem>
-          </SidebarMenu>
+          <SidebarGroupContent>
+            <SidebarMenu>
+              {jobItems.map((item, i) => (
+                <SidebarMenuItem key={i}>
+                  <Link
+                    href={item.path!}
+                    className={`flex items-center gap-2 px-2 py-1 rounded-sm text-sm font-medium hover:bg-muted
+        ${
+          isActive(item.path) ? "bg-muted text-orange-500" : "text-foreground"
+        }`}
+                  >
+                    <item.icon
+                      className={`size-4 ${
+                        isActive(item.path) ? "stroke-orange-500" : ""
+                      }`}
+                    />
+                    {item.label}
+                  </Link>
+                </SidebarMenuItem>
+              ))}
+            </SidebarMenu>
+          </SidebarGroupContent>
         </SidebarGroup>
-        <SidebarGroup />
       </SidebarContent>
+
       <SidebarFooter>
         <div className="border p-2 shadow-xs rounded-xl">
           <h1 className="font-medium tracking-tight">Credits usage</h1>
@@ -158,7 +204,6 @@ export function AppSidebar({ username, email }: AppSidebarProps) {
             Upgrade for more files
           </Button>
         </div>
-        <div></div>
       </SidebarFooter>
     </Sidebar>
   );
