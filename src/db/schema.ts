@@ -264,6 +264,7 @@ export const userCompletedLessonsRelations = relations(
 );
 
 export type Company = InferSelectModel<typeof companies>;
+export type Course = InferSelectModel<typeof courses>;
 export type CompanyWithCourses = {
   company: Company;
   courses: InferSelectModel<typeof courses> | null;
