@@ -42,7 +42,7 @@ const CarouselClient = ({ courses }: CarouselClientProps) => {
                           trailColor: "#e4e4e7",
                           textColor: "#000",
                         })}
-                        text={100}
+                        text={"100"}
                       />
                     </div>
                   </div>
