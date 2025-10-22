@@ -136,7 +136,7 @@ export function AppSidebar({ username, email }: AppSidebarProps) {
                 <SidebarMenuItem key={i}>
                   {item.isSearch ? (
                     <div className="flex items-center gap-2 px-2 py-1 rounded-sm text-sm font-medium">
-                      <item.icon className="size-4" />
+                      <item.icon className="size-4 stroke-2" />
                       <SpotlightSearch />
                     </div>
                   ) : (
