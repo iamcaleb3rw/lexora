@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Carousel,
   CarouselContent,
@@ -12,6 +13,7 @@ import { StripedPattern } from "@/src/components/magicui/striped-pattern";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import { Button } from "./ui/button";
 import { Course } from "@/src/db/schema";
+import { motion } from "framer-motion";
 
 interface CarouselClientProps {
   courses: Course[];
@@ -21,12 +23,21 @@ const CarouselClient = ({ courses }: CarouselClientProps) => {
   return (
     <Carousel className="w-full max-w-4xl">
       <CarouselContent className="-ml-1">
-        {courses.map((course) => (
+        {courses.map((course, index) => (
           <CarouselItem
             key={course.id}
-            className="pl-1 basis-1/2  md:basis-1/3 lg:basis-1/5"
+            className="pl-1 basis-1/2 md:basis-1/3 lg:basis-1/5"
           >
-            <div className="p-1">
+            <motion.div
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{
+                duration: 0.2,
+                delay: index === 0 ? 0 : index * 0.1, // staggered delay
+                ease: "easeOut",
+              }}
+              className="p-1"
+            >
               <Card className="p-1 min-h-[150px]">
                 <CardContent className="flex flex-col p-0">
                   <div className="relative overflow-hidden border-b flex justify-between items-center">
@@ -53,7 +64,7 @@ const CarouselClient = ({ courses }: CarouselClientProps) => {
                   </Button>
                 </CardContent>
               </Card>
-            </div>
+            </motion.div>
           </CarouselItem>
         ))}
       </CarouselContent>

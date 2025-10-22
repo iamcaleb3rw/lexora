@@ -1,11 +1,14 @@
 import CourseCarousel from "@/components/course-carousel";
+import { CourseCarouselSkeleton } from "@/components/course-carousel-skeleton";
 import WorkspaceClient from "@/components/WorkspaceClient";
-import React from "react";
+import React, { Suspense } from "react";
 
 const WorkSpace = () => {
   return (
     <WorkspaceClient>
-      <CourseCarousel />
+      <Suspense fallback={<CourseCarouselSkeleton />}>
+        <CourseCarousel />
+      </Suspense>
     </WorkspaceClient>
   );
 };
