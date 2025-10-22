@@ -1,6 +1,8 @@
 "use client";
 import { Button } from "@/components/ui/button";
-import { ChevronsLeft, ChevronsRight } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Separator } from "@/components/ui/separator";
+import { ChevronsLeft, ChevronsRight, Search } from "lucide-react";
 import { useState } from "react";
 
 const Courses = () => {
@@ -12,7 +14,7 @@ const Courses = () => {
   };
 
   return (
-    <div className="flex min-h-[calc(100vh-3rem)]">
+    <div className="flex h-[calc(100vh-3rem)]">
       {/* Sidebar */}
       <aside
         style={{
@@ -22,7 +24,6 @@ const Courses = () => {
         }}
         className="bg-white border-r border-gray-200 sticky top-[3rem] h-[calc(100vh-3rem)] flex flex-col overflow-hidden"
       >
-        {/* Content wrapper with opacity transition and padding */}
         <div
           style={{
             opacity: collapsed ? 0 : 1,
@@ -67,28 +68,46 @@ const Courses = () => {
         </div>
       </aside>
 
-      {/* Main Content */}
-      <main className="flex-1 my-2 overflow-auto p-2">
-        {collapsed && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => handleToggle(false)}
-            className="font-medium"
-          >
-            Show filters
-            <ChevronsRight className="size-4" />
-          </Button>
-        )}
-        <p>Main content goes here</p>
-        <div className="space-y-4">
-          {Array.from({ length: 50 }).map((_, i) => (
-            <div key={i} className="p-4 bg-gray-50 border rounded">
-              Item {i + 1}
+      {/* Main Area (separate flex column container) */}
+      <div className="flex-1 flex flex-col">
+        {/* Sticky search + show filters */}
+        <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-sm border-b px-3 py-2 flex items-center gap-2">
+          {collapsed && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleToggle(false)}
+              className="text-base text-muted-foreground font-medium"
+            >
+              Show filters
+              <ChevronsRight className="size-4" />
+            </Button>
+          )}
+          <Separator orientation="vertical" />
+          <div className="relative flex-1">
+            <Input
+              id="search"
+              className="peer ps-10 placeholder:text-base shadow-none border-2  placeholder:font-medium text-base font-medium"
+              placeholder="What do you want to learn?"
+              type="search"
+            />
+            <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
+              <Search className="size-4" strokeWidth={3} />
             </div>
-          ))}
+          </div>
         </div>
-      </main>
+
+        {/* Scrollable content (must be its own overflow container) */}
+        <main className="flex-1 overflow-y-auto p-2">
+          <div className="space-y-4">
+            {Array.from({ length: 50 }).map((_, i) => (
+              <div key={i} className="p-4 bg-gray-50 border rounded">
+                Item {i + 1}
+              </div>
+            ))}
+          </div>
+        </main>
+      </div>
     </div>
   );
 };
