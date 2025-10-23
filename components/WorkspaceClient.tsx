@@ -52,7 +52,7 @@ export const WorkspaceClient = ({
         </p>
         <hr className="md:mx-14 max-w-4xl mb-4" />
         <div className="md:ml-12">
-          <Suspense fallback={<CourseCarouselSkeleton />}>{children}</Suspense>
+          {children}
         </div>
         <hr className="my-2" />
         <div>
