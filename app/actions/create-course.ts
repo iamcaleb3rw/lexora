@@ -1,5 +1,5 @@
-import { db } from "@/src";
-import { courses, coursesToCategories } from "@/src/db/schema";
+import { db } from "@/server";
+import { courses, coursesToCategories } from "@/server/db/schema";
 
 type CreateCourseRequest = {
   companyId: number;
@@ -36,17 +36,21 @@ export async function createCourseWithCategories({
     }
 
     console.log(`🗂 Assigning ${categories.length} categories to course...`);
-    for (const categoryId of categories) {
-      try {
-        await db.insert(coursesToCategories).values({
-          courseId: newCourse.id,
-          categoryId: newCourse.id,
-        });
-        console.log(`✅ Category ${categoryId} assigned`);
-      } catch (e) {
-        console.error(`⚠ Failed to assign category ${categoryId}:`, e);
-      }
-    }
+
+    // Insert all category links in parallel
+    await Promise.all(
+      categories.map(async (categoryId) => {
+        try {
+          await db.insert(coursesToCategories).values({
+            courseId: newCourse.id,
+            categoryId: Number(categoryId),
+          });
+          console.log(`✅ Category ${categoryId} assigned`);
+        } catch (e) {
+          console.error(`⚠ Failed to assign category ${categoryId}:`, e);
+        }
+      })
+    );
 
     console.log("🎯 Course creation and category assignment complete!");
     return newCourse;

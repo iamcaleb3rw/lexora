@@ -1,6 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { toast } from "sonner"; // ShadCN toast
 import {
   Select,
   SelectContent,
@@ -8,42 +10,60 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { parseAsInteger, useQueryState } from "nuqs";
 import { formatDistance } from "date-fns";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import { ChevronsLeft, ChevronsRight, Search, Filter } from "lucide-react";
+import { ChevronsLeft, ChevronsRight, Search } from "lucide-react";
 import { CoursesInfo } from "@/app/actions/get-courses-metadata";
+import { Skeleton } from "./ui/skeleton";
+
+interface Category {
+  id: string;
+  name: string;
+}
+
 interface CoursesClientProps {
   courses: CoursesInfo;
 }
+
 const CoursesClient = ({ courses }: CoursesClientProps) => {
   const [collapsed, setCollapsed] = useState(false);
-  const [category, setCategory] = useState("all");
-  const [sortBy, setSortBy] = useState("newest");
-  const [difficulty, setDifficulty] = useState("");
+  const [search, setSearch] = useQueryState("search", { defaultValue: "" });
+  const [perPage, setPerPage] = useQueryState(
+    "perPage",
+    parseAsInteger.withDefault(10)
+  );
+  const [category, setCategory] = useQueryState("category", {
+    defaultValue: "",
+  });
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(false);
 
   const handleToggle = (newState: boolean) => {
-    console.log("[v0] Sidebar collapsed state changing to:", newState);
+    console.log("[Sidebar] Collapsed state changing to:", newState);
     setCollapsed(newState);
   };
 
-  const categories = [
-    { label: "All", value: "all" },
-    { label: "Programming", value: "programming" },
-    { label: "Design", value: "design" },
-    { label: "Marketing", value: "marketing" },
-    { label: "Business", value: "business" },
-  ];
+  // Fetch categories
+  useEffect(() => {
+    const fetchCategories = async () => {
+      setLoading(true);
+      try {
+        const { data } = await axios.get("/api/fetchcategories");
+        setCategories(data);
+      } catch (error: any) {
+        console.error("[Error fetching categories]:", error);
+        toast.error("Failed to load categories. Please try again later.");
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const sortOptions = [
-    { label: "A–Z", value: "az" },
-    { label: "Z–A", value: "za" },
-    { label: "Newest First", value: "newest" },
-    { label: "Most Popular", value: "popularity" },
-  ];
+    fetchCategories();
+  }, []);
 
   return (
     <div className="flex h-[calc(100vh-3rem)]">
@@ -79,37 +99,27 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
             <Label className="text-sm font-semibold text-gray-600">
               Category
             </Label>
-            <Select value={category} onValueChange={setCategory}>
-              <SelectTrigger className="w-full">
-                <SelectValue placeholder="Select category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.value} value={cat.value}>
-                    {cat.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* Difficulty Filter */}
-          <div className="space-y-2 mb-6">
-            <Label className="text-sm font-semibold text-gray-600">
-              Difficulty
-            </Label>
-            <RadioGroup
-              value={difficulty}
-              onValueChange={setDifficulty}
-              className="space-y-1"
-            >
-              {["Novice", "Intermediate", "Advanced"].map((level) => (
-                <div key={level} className="flex items-center space-x-2">
-                  <RadioGroupItem value={level.toLowerCase()} id={level} />
-                  <Label htmlFor={level}>{level}</Label>
-                </div>
-              ))}
-            </RadioGroup>
+            {loading ? (
+              <Skeleton className="h-6 w-full bg-muted-foreground/20" />
+            ) : (
+              <Select
+                value={category}
+                onValueChange={setCategory}
+                disabled={loading}
+              >
+                <SelectTrigger className="w-full">
+                  <SelectValue placeholder="Select category" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  {categories.map((cat) => (
+                    <SelectItem key={cat.id} value={cat.id}>
+                      {cat.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            )}
           </div>
         </div>
       </aside>
@@ -139,26 +149,13 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
               className="peer ps-10 placeholder:text-base shadow-none border-2 placeholder:font-medium text-base font-medium"
               placeholder="What do you want to learn?"
               type="search"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
             <div className="pointer-events-none absolute inset-y-0 start-0 flex items-center justify-center ps-3 text-muted-foreground/80 peer-disabled:opacity-50">
               <Search className="size-4" strokeWidth={3} />
             </div>
           </div>
-
-          {/* Sort Filter */}
-          <Select value={sortBy} onValueChange={setSortBy}>
-            <SelectTrigger className="w-[180px] ml-2">
-              <Filter className="size-4 mr-1" />
-              <SelectValue placeholder="Sort by" />
-            </SelectTrigger>
-            <SelectContent>
-              {sortOptions.map((option) => (
-                <SelectItem key={option.value} value={option.value}>
-                  {option.label}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
         </div>
 
         {/* Scrollable Course List */}
@@ -184,6 +181,18 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
                   <p className="line-clamp-2 text-sm mt-2 text-muted-foreground/80">
                     {course.description}
                   </p>
+                  <div className="flex">
+                    {Array.from(
+                      new Map(
+                        course.categories.map((c) => [
+                          c.category.id,
+                          c.category,
+                        ])
+                      ).values()
+                    ).map((category) => (
+                      <p key={category.id}>{category.name}</p>
+                    ))}
+                  </div>
                 </div>
               </div>
             ))}

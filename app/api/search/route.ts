@@ -1,10 +1,10 @@
 // app/api/search/route.ts
 import { NextResponse } from "next/server";
-import { db } from "@/src"; // your Drizzle client
+import { db } from "@/server"; // your Drizzle client
 import { embed } from "ai";
 import { google } from "@ai-sdk/google";
 import { sql } from "drizzle-orm";
-import { courses, lessons } from "@/src/db/schema";
+import { courses, lessons } from "@/server/db/schema";
 // Drizzle schema
 
 export async function POST(req: Request) {

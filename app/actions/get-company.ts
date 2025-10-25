@@ -1,6 +1,6 @@
 "use server";
-import { db } from "@/src";
-import { companies, courses } from "@/src/db/schema";
+import { db } from "@/server";
+import { companies, courses } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function getCompanyById(companyId: any) {

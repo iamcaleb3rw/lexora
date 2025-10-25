@@ -1,5 +1,5 @@
-import { db } from "@/src";
-import { lessons } from "@/src/db/schema";
+import { db } from "@/server";
+import { lessons } from "@/server/db/schema";
 import { asc, eq, sql } from "drizzle-orm";
 
 export async function getLessonById(lessonId: number) {

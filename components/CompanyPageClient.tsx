@@ -1,6 +1,6 @@
 "use client";
 import { getCompanyById } from "@/app/actions/get-company";
-import { Company } from "@/src/db/schema";
+import { Company } from "@/server/db/schema";
 import Image from "next/image";
 import Link from "next/link";
 import React, { createContext, useState } from "react";

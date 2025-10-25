@@ -1,6 +1,6 @@
 "use server";
-import { db } from "@/src";
-import { courses } from "@/src/db/schema";
+import { db } from "@/server";
+import { courses } from "@/server/db/schema";
 import { eq } from "drizzle-orm";
 
 export async function getCourseMetadata(courseId: number) {

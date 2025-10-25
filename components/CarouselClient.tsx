@@ -9,10 +9,10 @@ import {
 } from "./ui/carousel";
 import "react-circular-progressbar/dist/styles.css";
 import { Card, CardContent } from "./ui/card";
-import { StripedPattern } from "@/src/components/magicui/striped-pattern";
+import { StripedPattern } from "@/server/components/magicui/striped-pattern";
 import { buildStyles, CircularProgressbar } from "react-circular-progressbar";
 import { Button } from "./ui/button";
-import { Course } from "@/src/db/schema";
+import { Course } from "@/server/db/schema";
 import { motion } from "framer-motion";
 
 interface CarouselClientProps {

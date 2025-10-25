@@ -1,6 +1,6 @@
 "use server";
 
-import { db } from "@/src";
+import { db } from "@/server";
 
 export async function getCoursesInfo() {
   try {
@@ -19,9 +19,18 @@ export async function getCoursesInfo() {
             name: true,
           },
         },
+        categories: {
+          with: {
+            category: {
+              columns: {
+                id: true,
+                name: true,
+              },
+            },
+          },
+        },
       },
     });
-
     return products;
   } catch (e) {
     console.error("ERROR FETCHING COURSES_INFO", e);

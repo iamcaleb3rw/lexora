@@ -108,7 +108,7 @@ export const courses = pgTable("courses", {
   thumbnail_url: text("thumbnail_url"),
   company_id: integer("company_id")
     .notNull()
-    .references(() => companies.id),
+    .references(() => companies.id, { onDelete: "cascade" }),
   is_published: boolean("is_published").default(false),
   created_at: timestamp("created_at").defaultNow(),
   embedding: vector("embedding", { dimensions: 3072 }),
@@ -122,7 +122,7 @@ export const lessons = pgTable("lessons", {
     .default("novice"),
   course_id: integer("course_id")
     .notNull()
-    .references(() => courses.id),
+    .references(() => courses.id, { onDelete: "cascade" }),
   title: varchar("title", { length: 255 }).notNull(),
   content: text("content"),
   video_url: text("video_url"),
@@ -221,10 +221,10 @@ export const categoriesRelations = relations(categories, ({ many }) => ({
 export const coursesToCategories = pgTable("courses_to_categories", {
   courseId: integer("course_id")
     .notNull()
-    .references(() => courses.id),
+    .references(() => courses.id, { onDelete: "cascade" }),
   categoryId: integer("category_id")
     .notNull()
-    .references(() => categories.id),
+    .references(() => categories.id, { onDelete: "cascade" }),
 });
 
 export const coursesToCategoriesRelations = relations(

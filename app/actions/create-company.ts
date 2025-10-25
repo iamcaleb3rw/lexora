@@ -1,6 +1,6 @@
 "use server";
-import { db } from "@/src";
-import { companies } from "@/src/db/schema";
+import { db } from "@/server";
+import { companies } from "@/server/db/schema";
 
 export async function createCompany(
   name: string,

@@ -1,8 +1,8 @@
 import { embed } from "ai";
 import { google } from "@ai-sdk/google";
 import "dotenv/config";
-import { db } from "../src";
-import { lessons } from "../src/db/schema";
+import { db } from "../server";
+import { lessons } from "../server/db/schema";
 import { eq } from "drizzle-orm";
 
 const MODEL = google.textEmbeddingModel("gemini-embedding-001");

@@ -1,8 +1,8 @@
-import { db } from "@/src";
+import { db } from "@/server";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { emailOTP } from "better-auth/plugins";
-import * as schema from "@/src/db/schema";
+import * as schema from "@/server/db/schema";
 import { resend } from "./resend";
 import EmailTemplate from "@/components/email-template";
 

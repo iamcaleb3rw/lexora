@@ -1,8 +1,8 @@
 import { embedMany } from "ai";
 import { google } from "@ai-sdk/google";
 import "dotenv/config";
-import { db } from "../src";
-import { courses } from "../src/db/schema";
+import { db } from "../server";
+import { courses } from "../server/db/schema";
 import { eq, isNotNull, isNull } from "drizzle-orm";
 
 const MODEL = google.textEmbeddingModel("gemini-embedding-001");
@@ -11,10 +11,30 @@ async function main() {
   console.log("[BATCH] Fetching courses...");
 
   // Only select courses without embeddings
-  const coursesToEmbed = await db
-    .select()
-    .from(courses)
-    .where(isNull(courses.embedding));
+  const coursesToEmbed = await db.query.courses.findMany({
+    where: isNull(courses.embedding),
+    columns: {
+      id: true,
+      title: true,
+      description: true,
+    },
+    with: {
+      company: {
+        columns: {
+          name: true,
+        },
+      },
+      categories: {
+        with: {
+          category: {
+            columns: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
 
   console.log(
     `[BATCH] Found ${coursesToEmbed.length} courses without embeddings.`
@@ -26,7 +46,17 @@ async function main() {
   }
 
   // Prepare texts for embedding: title + description
-  const texts = coursesToEmbed.map((c) => `${c.title}\n${c.description || ""}`);
+  const texts = coursesToEmbed.map((c) => {
+    const categoryNames = c.categories?.map((cat) => cat.category.name) || [];
+    const companyName = c.company?.name || "";
+
+    return `
+  ${c.title}
+  ${c.description || ""}
+  Categories: ${categoryNames.join(", ")}
+  Author: ${companyName}
+  `;
+  });
   console.log("[BATCH] Prepared texts for embedding.");
 
   try {
