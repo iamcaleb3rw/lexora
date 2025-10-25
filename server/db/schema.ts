@@ -119,7 +119,7 @@ export const courses = pgTable(
   (table) => [
     index("courses_search_index").using(
       "gin",
-      sql`to_tsvector('english', ${table.title})`
+      sql`to_tsvector('english', ${table.title} || ' ' || coalesce(${table.description}, ''))`
     ),
   ]
 );

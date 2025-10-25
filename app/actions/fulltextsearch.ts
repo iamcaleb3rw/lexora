@@ -7,7 +7,7 @@ import { sql } from "drizzle-orm";
 export async function fullTextSearch(query: string | null) {
   try {
     const results = await db.query.courses.findMany({
-      where: sql`to_tsvector('english', ${courses.title}) @@ plainto_tsquery('english', ${query})`,
+      where: sql`to_tsvector('english', ${courses.title}|| ' ' || ${courses.description}) @@ plainto_tsquery('english', ${query})`,
       columns: {
         id: true,
         title: true,
