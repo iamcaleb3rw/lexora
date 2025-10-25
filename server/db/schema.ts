@@ -1,4 +1,4 @@
-import { InferSelectModel, relations } from "drizzle-orm";
+import { InferSelectModel, relations, sql } from "drizzle-orm";
 
 import {
   pgTable,
@@ -11,6 +11,7 @@ import {
   pgEnum,
   primaryKey,
   vector,
+  index,
 } from "drizzle-orm/pg-core";
 
 export const lessonTypeEnum = pgEnum("lesson_type", [
@@ -101,18 +102,27 @@ export const companies = pgTable("companies", {
   created_at: timestamp("created_at").defaultNow(),
 });
 
-export const courses = pgTable("courses", {
-  id: serial("id").primaryKey(),
-  title: varchar("title", { length: 255 }).notNull(),
-  description: text("description"),
-  thumbnail_url: text("thumbnail_url"),
-  company_id: integer("company_id")
-    .notNull()
-    .references(() => companies.id, { onDelete: "cascade" }),
-  is_published: boolean("is_published").default(false),
-  created_at: timestamp("created_at").defaultNow(),
-  embedding: vector("embedding", { dimensions: 3072 }),
-});
+export const courses = pgTable(
+  "courses",
+  {
+    id: serial("id").primaryKey(),
+    title: varchar("title", { length: 255 }).notNull(),
+    description: text("description"),
+    thumbnail_url: text("thumbnail_url"),
+    company_id: integer("company_id")
+      .notNull()
+      .references(() => companies.id, { onDelete: "cascade" }),
+    is_published: boolean("is_published").default(false),
+    created_at: timestamp("created_at").defaultNow(),
+    embedding: vector("embedding", { dimensions: 3072 }),
+  },
+  (table) => [
+    index("courses_search_index").using(
+      "gin",
+      sql`to_tsvector('english', ${table.title})`
+    ),
+  ]
+);
 
 export const lessons = pgTable("lessons", {
   id: serial("id").primaryKey(),

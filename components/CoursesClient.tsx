@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { ChevronsLeft, ChevronsRight, Search } from "lucide-react";
-import { CoursesInfo } from "@/app/actions/get-courses-metadata";
+import type { CoursesInfo } from "@/app/actions/get-courses-metadata";
 import { Skeleton } from "./ui/skeleton";
 
 interface Category {
@@ -41,6 +41,8 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
   });
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
+  const [searchResults, setSearchResults] = useState<CoursesInfo | null>(null);
+  const [searchLoading, setSearchLoading] = useState(false);
 
   const handleToggle = (newState: boolean) => {
     console.log("[Sidebar] Collapsed state changing to:", newState);
@@ -64,6 +66,36 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
 
     fetchCategories();
   }, []);
+
+  useEffect(() => {
+    // If search is empty, show initial courses
+    if (!search || search.trim() === "") {
+      setSearchResults(null);
+      return;
+    }
+
+    // Debounce search by 500ms
+    const timeoutId = setTimeout(async () => {
+      setSearchLoading(true);
+      try {
+        const response = await axios.get("/api/fulltextsearch", {
+          params: { search },
+        });
+        setSearchResults(response.data);
+      } catch (error: any) {
+        console.error("[Error searching courses]:", error);
+        toast.error("Failed to search courses. Please try again.");
+        setSearchResults(null);
+      } finally {
+        setSearchLoading(false);
+      }
+    }, 500);
+
+    return () => clearTimeout(timeoutId);
+  }, [search, category, perPage]);
+
+  const displayCourses = searchResults !== null ? searchResults : courses;
+  const isSearchActive = search && search.trim() !== "";
 
   return (
     <div className="flex h-[calc(100vh-3rem)]">
@@ -160,41 +192,77 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
 
         {/* Scrollable Course List */}
         <main className="flex-1 overflow-y-auto p-4">
-          <div className="space-y-4">
-            {courses.map((course) => (
-              <div key={course.id} className="flex">
-                <img
-                  src={course.thumbnail_url || ""}
-                  alt="Course thumbnail"
-                  className="max-w-[250px] aspect-video object-cover border w-full"
-                />
-                <div className="flex-1 flex flex-col border p-2">
-                  <p className="uppercase text-xs text-muted-foreground font-medium">
-                    By <span>{course.company.name}</span>
-                  </p>
-                  <p className="font-medium">{course.title}</p>
-                  <p className="text-xs text-muted-foreground font-medium">
-                    {formatDistance(new Date(course.created_at!), new Date(), {
-                      addSuffix: true,
-                    })}
-                  </p>
-                  <p className="line-clamp-2 text-sm mt-2 text-muted-foreground/80">
-                    {course.description}
-                  </p>
-                  <div className="flex space-x-1 text-violet-500 mt-auto">
-                    {course.categories.map((c) => (
-                      <div
-                        key={c.categoryId}
-                        className="border bg-muted rounded-sm  text-sm px-2"
-                      >
-                        {c.category.name}
-                      </div>
-                    ))}
+          {searchLoading ? (
+            <div className="space-y-4">
+              {Array.from({ length: 3 }).map((_, i) => (
+                <div key={i} className="flex">
+                  <Skeleton className="max-w-[250px] aspect-video w-full" />
+                  <div className="flex-1 flex flex-col border p-2 space-y-2">
+                    <Skeleton className="h-4 w-24" />
+                    <Skeleton className="h-5 w-3/4" />
+                    <Skeleton className="h-3 w-32" />
+                    <Skeleton className="h-4 w-full" />
+                    <Skeleton className="h-4 w-full" />
+                    <div className="flex space-x-1 mt-auto">
+                      <Skeleton className="h-6 w-20" />
+                      <Skeleton className="h-6 w-20" />
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {isSearchActive && displayCourses.length === 0 ? (
+                <div className="text-center py-12">
+                  <p className="text-muted-foreground text-lg font-medium">
+                    No courses found for "{search}"
+                  </p>
+                  <p className="text-muted-foreground/60 text-sm mt-2">
+                    Try adjusting your search or filters
+                  </p>
+                </div>
+              ) : (
+                displayCourses.map((course) => (
+                  <div key={course.id} className="flex">
+                    <img
+                      src={course.thumbnail_url || ""}
+                      alt="Course thumbnail"
+                      className="max-w-[250px] aspect-video object-cover border w-full"
+                    />
+                    <div className="flex-1 flex flex-col border p-2">
+                      <p className="uppercase text-xs text-muted-foreground font-medium">
+                        By <span>{course.company.name}</span>
+                      </p>
+                      <p className="font-medium">{course.title}</p>
+                      <p className="text-xs text-muted-foreground font-medium">
+                        {formatDistance(
+                          new Date(course.created_at!),
+                          new Date(),
+                          {
+                            addSuffix: true,
+                          }
+                        )}
+                      </p>
+                      <p className="line-clamp-2 text-sm mt-2 text-muted-foreground/80">
+                        {course.description}
+                      </p>
+                      <div className="flex space-x-1 text-violet-500 mt-auto">
+                        {course.categories.map((c) => (
+                          <div
+                            key={c.categoryId}
+                            className="border bg-muted rounded-sm  text-sm px-2"
+                          >
+                            {c.category.name}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          )}
         </main>
       </div>
     </div>

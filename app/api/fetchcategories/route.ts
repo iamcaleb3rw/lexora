@@ -13,7 +13,6 @@ export async function GET(req: Request) {
       id: cat.id,
       name: cat.name,
     }));
-    console.log(allCategories);
     return NextResponse.json(data);
   } catch (e) {
     console.log(e);
