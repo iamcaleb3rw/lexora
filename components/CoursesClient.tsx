@@ -166,9 +166,9 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
                 <img
                   src={course.thumbnail_url || ""}
                   alt="Course thumbnail"
-                  className="max-w-[250px] border w-full"
+                  className="max-w-[250px] aspect-video object-cover border w-full"
                 />
-                <div className="flex-1 border p-2">
+                <div className="flex-1 flex flex-col border p-2">
                   <p className="uppercase text-xs text-muted-foreground font-medium">
                     By <span>{course.company.name}</span>
                   </p>
@@ -181,16 +181,14 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
                   <p className="line-clamp-2 text-sm mt-2 text-muted-foreground/80">
                     {course.description}
                   </p>
-                  <div className="flex">
-                    {Array.from(
-                      new Map(
-                        course.categories.map((c) => [
-                          c.category.id,
-                          c.category,
-                        ])
-                      ).values()
-                    ).map((category) => (
-                      <p key={category.id}>{category.name}</p>
+                  <div className="flex space-x-1 text-violet-500 mt-auto">
+                    {course.categories.map((c) => (
+                      <div
+                        key={c.categoryId}
+                        className="border bg-muted rounded-sm  text-sm px-2"
+                      >
+                        {c.category.name}
+                      </div>
                     ))}
                   </div>
                 </div>

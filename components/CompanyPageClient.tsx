@@ -49,7 +49,7 @@ const CompanyPageClient = ({ company }: CompanyPageClientProps) => {
                     src={course.thumbnail_url ?? placeholder}
                     alt="Course thumbnail"
                     fill
-                    className="rounded-md"
+                    className="rounded-md object-cover"
                   />
                 </div>
                 <div className="mt-1 space-y-2">
