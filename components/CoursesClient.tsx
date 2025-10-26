@@ -19,6 +19,7 @@ import { Separator } from "@/components/ui/separator";
 import { ChevronsLeft, ChevronsRight, Search } from "lucide-react";
 import type { CoursesInfo } from "@/app/actions/get-courses-metadata";
 import { Skeleton } from "./ui/skeleton";
+import { SidebarTrigger } from "./TriggerButton";
 
 interface Category {
   id: string;
@@ -122,6 +123,7 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
 
   return (
     <div className="flex h-[calc(100vh-3rem)]">
+      <SidebarTrigger />
       {/* Sidebar */}
       <aside
         style={{

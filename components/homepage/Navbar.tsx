@@ -18,11 +18,12 @@ import {
 } from "@/components/ui/popover";
 
 import Spinner from "@/components/spinner";
-import Logo from "../logo";
+import Logo from "@/public/iconlogo.svg";
 import UserMenu from "../user-menu";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import { Skeleton } from "../ui/skeleton";
+import Image from "next/image";
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
@@ -171,7 +172,7 @@ export default function Navbar() {
           {/* Logo */}
           <div className="flex items-center gap-6">
             <Link href="#" className="text-primary hover:text-primary/90">
-              <Logo />
+              <Image src={Logo} alt="Lexora Logo" width={30} />
             </Link>
           </div>
         </div>
