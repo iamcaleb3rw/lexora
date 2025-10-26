@@ -12,6 +12,7 @@ import {
   primaryKey,
   vector,
   index,
+  uuid,
 } from "drizzle-orm/pg-core";
 
 export const lessonTypeEnum = pgEnum("lesson_type", [
@@ -27,6 +28,16 @@ export const difficultyTypeEnum = pgEnum("difficulty_level", [
   "novice",
   "intermediate",
   "expert",
+]);
+
+export const suggestionTypeEnum = pgEnum("suggestion_type", [
+  "grammar", // e.g., grammar/spelling corrections
+  "clarity", // unclear or wordy statements
+  "impact", // low-impact wording (replace with strong verbs/results)
+  "structure", // poor organization or flow
+  "ats", // ATS keyword or formatting issue
+  "tone", // tone too informal or inconsistent
+  "consistency", // inconsistent tense, style, or formatting
 ]);
 
 export const user = pgTable("user", {
@@ -124,6 +135,30 @@ export const courses = pgTable(
   ]
 );
 
+export const resumes = pgTable("resumes", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  owner_id: text("owner_id")
+    .notNull()
+    .references(() => user.id, { onDelete: "cascade" }),
+  file_url: text("file_url").notNull(),
+  ats_score: integer("ats_score").default(0),
+  created_at: timestamp("created_at").defaultNow(),
+});
+
+export const resumeSuggestions = pgTable("resume_suggestions", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  resume_id: uuid("resume_id")
+    .references(() => resumes.id, { onDelete: "cascade" })
+    .notNull(),
+  start: integer("start").notNull(),
+  end: integer("end").notNull(),
+  issue: text("issue").notNull(),
+  suggestion: text("suggestion").notNull(),
+  replacement: text("replacement"),
+  type: suggestionTypeEnum("type").default("grammar").notNull(),
+  createdAt: timestamp("created_at").defaultNow(),
+});
+
 export const lessons = pgTable("lessons", {
   id: serial("id").primaryKey(),
   type: lessonTypeEnum("type").notNull(),
@@ -204,7 +239,23 @@ export const userCompletedLessons = pgTable(
 export const userRelations = relations(user, ({ many, one }) => ({
   badges: many(userBadges),
   companies: many(companies),
+  resumes: many(resumes),
   lessons: many(userCompletedLessons),
+}));
+
+export const resumeRelations = relations(resumes, ({ one, many }) => ({
+  owner: one(user, {
+    fields: [resumes.owner_id],
+    references: [user.id],
+  }),
+  suggestions: many(resumeSuggestions),
+}));
+
+export const suggestionRelations = relations(resumeSuggestions, ({ one }) => ({
+  resume: one(resumes, {
+    fields: [resumeSuggestions.resume_id],
+    references: [resumes.id],
+  }),
 }));
 
 export const companiesRelations = relations(companies, ({ one, many }) => ({
