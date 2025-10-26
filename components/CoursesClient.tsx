@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import axios from "axios";
 import { toast } from "sonner"; // ShadCN toast
 import {
@@ -37,7 +37,7 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
     parseAsInteger.withDefault(10)
   );
   const [category, setCategory] = useQueryState("category", {
-    defaultValue: "",
+    defaultValue: "all",
   });
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
@@ -79,7 +79,10 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
       setSearchLoading(true);
       try {
         const response = await axios.get("/api/fulltextsearch", {
-          params: { search },
+          params: {
+            search,
+            ...(category && category !== "all" && { category }),
+          },
         });
         setSearchResults(response.data);
       } catch (error: any) {
@@ -92,10 +95,30 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
     }, 500);
 
     return () => clearTimeout(timeoutId);
-  }, [search, category, perPage]);
+  }, [search, category]);
 
-  const displayCourses = searchResults !== null ? searchResults : courses;
+  const displayCourses = useMemo(() => {
+    // If search is active, use search results
+    if (searchResults !== null) {
+      return searchResults;
+    }
+
+    // If no category selected or "all", show all courses
+    if (!category || category === "all") {
+      return courses;
+    }
+
+    // Filter courses by category on the client
+    return courses.filter((course) =>
+      course.categories.some((c) => c.categoryId === Number(category))
+    );
+  }, [searchResults, courses, category]);
+
   const isSearchActive = search && search.trim() !== "";
+  const isCategoryFilterActive = category && category !== "all";
+  const selectedCategoryName = categories.find(
+    (cat) => cat.id === category
+  )?.name;
 
   return (
     <div className="flex h-[calc(100vh-3rem)]">
@@ -213,10 +236,16 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
             </div>
           ) : (
             <div className="space-y-4">
-              {isSearchActive && displayCourses.length === 0 ? (
+              {displayCourses.length === 0 ? (
                 <div className="text-center py-12">
                   <p className="text-muted-foreground text-lg font-medium">
-                    No courses found for "{search}"
+                    {isSearchActive && isCategoryFilterActive
+                      ? `No courses found for "${search}" in ${selectedCategoryName}`
+                      : isSearchActive
+                        ? `No courses found for "${search}"`
+                        : isCategoryFilterActive
+                          ? `No courses found in ${selectedCategoryName}`
+                          : "No courses available"}
                   </p>
                   <p className="text-muted-foreground/60 text-sm mt-2">
                     Try adjusting your search or filters
