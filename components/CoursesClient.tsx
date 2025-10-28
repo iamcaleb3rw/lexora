@@ -138,18 +138,20 @@ const CoursesClient = ({ courses }: CoursesClientProps) => {
             opacity: collapsed ? 0 : 1,
             transition: "opacity 300ms ease-out",
           }}
-          className={`flex flex-col p-4 ${collapsed ? "pointer-events-none" : ""}`}
+          className={`flex flex-col ${collapsed ? "pointer-events-none" : ""}`}
         >
-          <Button
-            variant="outline"
-            className="w-full text-base text-muted-foreground flex items-center justify-between font-medium rounded-md bg-transparent"
-            onClick={() => handleToggle(true)}
-          >
-            Hide Filters
-            <ChevronsLeft className="size-4" />
-          </Button>
+          <div className="p-2">
+            <Button
+              variant="outline"
+              className="w-full text-base text-muted-foreground flex items-center justify-between font-medium rounded-md bg-transparent"
+              onClick={() => handleToggle(true)}
+            >
+              Hide Filters
+              <ChevronsLeft className="size-4" />
+            </Button>
+          </div>
 
-          <Separator className="mb-4" />
+          <Separator className="mb-4 h-px" />
 
           {/* Category Filter */}
           <div className="space-y-2 mb-6">

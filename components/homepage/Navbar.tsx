@@ -98,10 +98,10 @@ export default function Navbar() {
 
     return (
       <div className="flex items-center gap-2">
-        <Button asChild variant="ghost" size="sm" className="text-sm">
+        <Button variant="ghost" size="sm" className="text-sm">
           <Link href="/login">Sign In</Link>
         </Button>
-        <Button asChild size="sm" className="text-sm">
+        <Button size="sm" className="text-sm">
           <Link href="/login">Get Started</Link>
         </Button>
       </div>

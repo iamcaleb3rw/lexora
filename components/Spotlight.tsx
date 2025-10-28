@@ -303,7 +303,7 @@ export default function SemanticSearchDialog() {
   return (
     <>
       {/* Keyboard shortcut hint */}
-      <div className="fixed bottom-4 right-4 bg-background border rounded-lg px-3 py-2 text-sm text-muted-foreground shadow-sm hidden md:block">
+      {/* <div className="fixed bottom-4 right-4 bg-background border rounded-lg px-3 py-2 text-sm text-muted-foreground shadow-sm hidden md:block">
         Press{" "}
         <kbd className="pointer-events-none inline-flex h-5 select-none items-center gap-1 rounded border bg-muted px-1.5 font-mono text-[10px] font-medium text-muted-foreground opacity-100">
           <span className="text-xs">
@@ -311,7 +311,7 @@ export default function SemanticSearchDialog() {
           </span>
         </kbd>{" "}
         to search
-      </div>
+      </div> */}
 
       {/* Add global styles for animations */}
       <style jsx global>{`
