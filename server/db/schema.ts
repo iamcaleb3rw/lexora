@@ -143,6 +143,8 @@ export const resumes = pgTable("resumes", {
   file_url: text("file_url").notNull(),
   ats_score: integer("ats_score").default(0),
   created_at: timestamp("created_at").defaultNow(),
+  job_description: text("job_description"),
+  job_title: text("job_title").notNull(),
 });
 
 export const resumeSuggestions = pgTable("resume_suggestions", {
