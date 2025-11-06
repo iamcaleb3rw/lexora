@@ -14,6 +14,7 @@ import { Check, ImageIcon, X } from "lucide-react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { SidebarTrigger } from "@/components/TriggerButton";
+import { useRouter } from "next/navigation";
 
 const cvFormSchema = z.object({
   jobTitle: z.string().min(3, "Job title must be at least 3 characters"),
@@ -50,6 +51,8 @@ export default function CreateCV() {
   const [uploading, setUploading] = useState<boolean>(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState<boolean>(false);
+
+  const router = useRouter();
 
   const handleFileUpload = async (file: File) => {
     setFileName(file.name);
@@ -134,6 +137,9 @@ export default function CreateCV() {
     };
     const response = await axios.post("/api/createresume", payload);
     console.log("RESPONSE", response);
+    if (response.status === 200) {
+      router.push("/workspace/cv/ai");
+    }
   };
 
   return (
