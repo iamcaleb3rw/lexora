@@ -1,5 +1,7 @@
 "use client";
 
+import type React from "react";
+
 import { useState } from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
@@ -19,17 +21,6 @@ import { useRouter } from "next/navigation";
 const cvFormSchema = z.object({
   jobTitle: z.string().min(3, "Job title must be at least 3 characters"),
   jobDescription: z.string().optional(),
-  resume: z
-    .custom<FileList>()
-    .refine((files) => files?.length > 0, "Resume file is required")
-    .refine(
-      (files) => files?.[0]?.type === "application/pdf",
-      "Only PDF files are accepted"
-    )
-    .refine(
-      (files) => files?.[0]?.size <= 10 * 1024 * 1024,
-      "File size must be less than 10MB"
-    ),
 });
 
 type CVFormData = z.infer<typeof cvFormSchema>;
@@ -51,6 +42,9 @@ export default function CreateCV() {
   const [uploading, setUploading] = useState<boolean>(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState<boolean>(false);
+  const [resumeValidationError, setResumeValidationError] = useState<
+    string | null
+  >(null);
 
   const router = useRouter();
 
@@ -58,8 +52,20 @@ export default function CreateCV() {
     setFileName(file.name);
     setUploading(true);
     setUploadError(null);
+    setResumeValidationError(null);
     setUploadProgress(0);
     setResumeUrl(null);
+
+    if (file.type !== "application/pdf") {
+      setResumeValidationError("Only PDF files are accepted");
+      setUploading(false);
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      setResumeValidationError("File size must be less than 10MB");
+      setUploading(false);
+      return;
+    }
 
     const formData = new FormData();
     formData.append("file", file);
@@ -79,11 +85,6 @@ export default function CreateCV() {
       // Closure delay for realism
       await new Promise((r) => setTimeout(r, 600));
       setResumeUrl(response.data);
-
-      // Update RHF value for validation
-      const fileList = new DataTransfer();
-      fileList.items.add(file);
-      setValue("resume", fileList.files);
     } catch (error: any) {
       console.error("Upload failed:", error);
       setUploadError("Upload failed. Please try again.");
@@ -121,12 +122,12 @@ export default function CreateCV() {
     setResumeUrl(null);
     setFileName("");
     setUploadProgress(0);
-    setValue("resume", new DataTransfer().files);
-    // TODO: optionally delete from Pinata
+    setResumeValidationError(null);
   };
 
   const onSubmit = async (data: CVFormData) => {
     if (!resumeUrl) {
+      setResumeValidationError("Resume file is required");
       return;
     }
 
@@ -196,9 +197,7 @@ export default function CreateCV() {
               >
                 <div className="text-center">
                   <ImageIcon
-                    className={`mx-auto size-12 transition-colors ${
-                      dragActive ? "text-indigo-400" : "text-gray-300"
-                    }`}
+                    className={`mx-auto size-12 transition-colors ${dragActive ? "text-indigo-400" : "text-gray-300"}`}
                   />
                   <div className="mt-4 flex text-sm text-gray-600">
                     <label
@@ -211,7 +210,6 @@ export default function CreateCV() {
                         type="file"
                         accept=".pdf"
                         className="sr-only"
-                        {...register("resume")}
                         onChange={handleFileSelect}
                       />
                     </label>
@@ -263,9 +261,9 @@ export default function CreateCV() {
                     )}
                   </AnimatePresence>
 
-                  {errors.resume && (
+                  {resumeValidationError && (
                     <p className="text-sm text-red-600 mt-2">
-                      {errors.resume.message as string}
+                      {resumeValidationError}
                     </p>
                   )}
 
