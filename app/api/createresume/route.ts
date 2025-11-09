@@ -24,13 +24,20 @@ export async function POST(req: Request) {
     console.log("OWNER ID", ownerId);
     console.log("RECEIVED DATA FROM CREATE", data);
     const parsedData = createCVSchema.parse(data);
-    const result = await db.insert(resumes).values({
-      owner_id: ownerId,
-      job_title: parsedData.job_title,
-      job_description: parsedData.job_description,
-      file_url: parsedData.resume_url,
-    });
-    return NextResponse.json("Yesss");
+    const result = await db
+      .insert(resumes)
+      .values({
+        owner_id: ownerId,
+        job_title: parsedData.job_title,
+        job_description: parsedData.job_description,
+        file_url: parsedData.resume_url,
+      })
+      .returning({
+        resumeId: resumes.id,
+      });
+
+    console.log(result);
+    return NextResponse.json(result);
   } catch (e) {
     console.error(e);
     throw new Error("Failed to create Resumé.");

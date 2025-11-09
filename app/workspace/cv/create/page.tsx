@@ -137,9 +137,9 @@ export default function CreateCV() {
       resume_url: resumeUrl,
     };
     const response = await axios.post("/api/createresume", payload);
-    console.log("RESPONSE", response);
+    console.log("RESPONSE", response.data.resumeId);
     if (response.status === 200) {
-      router.push("/workspace/cv/ai");
+      router.push(`/workspace/cv/${response.data.resumeId}`);
     }
   };
 
