@@ -5,10 +5,10 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
 
 interface ResumeWorkspaceProps {
-  resumeHTML: any;
+  resumeText: any;
 }
 
-export default function ResumeWorkspace({ resumeHTML }: ResumeWorkspaceProps) {
+export default function ResumeWorkspace({ resumeText }: ResumeWorkspaceProps) {
   const [aiOpen, setAiOpen] = useState(true);
 
   return (
@@ -16,10 +16,7 @@ export default function ResumeWorkspace({ resumeHTML }: ResumeWorkspaceProps) {
       {/* Left Panel - Resume Editor */}
       <div className="flex-1 overflow-y-auto bg-white p-4">
         <div className="min-h-[800px] border rounded-xl p-4 bg-gray-50">
-          <div
-            className="prose"
-            dangerouslySetInnerHTML={{ __html: resumeHTML }}
-          />
+          ResumeTExt: {resumeText}
         </div>
       </div>
 
