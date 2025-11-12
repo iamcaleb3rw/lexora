@@ -28,6 +28,7 @@ const ResumeSchema = z.object({
   fullName: z.string().optional(),
   portfolioUrl: z.string().optional(),
   linkedinUsername: z.string().optional(),
+  emailAddress: z.string().optional(),
   phoneNumber: z.string().optional(),
   experience: z.array(ExperienceSchema),
   education: z.array(EducationSchema),
@@ -60,3 +61,5 @@ If a field cannot be determined, use an empty array (for arrays) or omit optiona
     throw new Error("Failed to generate structured resume");
   }
 }
+
+export type StructuredResume = z.infer<typeof ResumeSchema>;

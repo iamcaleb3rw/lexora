@@ -15,7 +15,9 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   const resumeText = await getResumeText(resume.file_url);
   const finalResume = await getStructuredResume(resumeText);
   console.log("FINALRESUME", finalResume);
-  return <ResumeWorkspace resumeText={resumeText} />;
+  return (
+    <ResumeWorkspace finalResume={finalResume} jobposition={resume.job_title} />
+  );
 };
 
 export default Page;
