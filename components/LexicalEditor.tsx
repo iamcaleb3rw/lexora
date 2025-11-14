@@ -1,25 +1,18 @@
-import { FC } from "react";
-import {
-  EditorComposer,
-  Editor,
-  ToolbarPlugin,
-  InsertDropdown,
-  AlignDropdown,
-} from "verbum";
-
-const NoteViewer: FC = () => {
+import SunEditor, { buttonList } from "suneditor-react";
+import "suneditor/dist/css/suneditor.min.css";
+export const Editor = () => {
   return (
-    <div className="border-2 h-full m-0 p-0">
-      <EditorComposer>
-        <Editor hashtagsEnabled={true}>
-          <ToolbarPlugin defaultFontSize="12px">
-            <InsertDropdown enableEquations />
-            <AlignDropdown />
-          </ToolbarPlugin>
-        </Editor>
-      </EditorComposer>
+    <div className="h-full m-0 p-0">
+      <SunEditor
+        setDefaultStyle="font-family: 'SF Pro'"
+        setOptions={{
+          height: "500",
+          buttonList: buttonList.complex,
+          font: ["Verdana", "Arial", "Trebuchet MS", "SF Pro"],
+        }}
+      ></SunEditor>
     </div>
   );
 };
 
-export default NoteViewer;
+export default Editor;

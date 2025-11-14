@@ -3,8 +3,7 @@
 import React, { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
-import { StructuredResume } from "@/app/actions/get-structured-resume";
-import NoteViewer from "./LexicalEditor";
+import Editor from "./LexicalEditor";
 
 export default function ResumeWorkspace() {
   const [aiOpen, setAiOpen] = useState(true);
@@ -13,7 +12,7 @@ export default function ResumeWorkspace() {
     <div className="flex h-[calc(100vh-52px)] overflow-hidden border-t relative">
       {/* Left Panel - Resume Editor */}
       <div className="flex-1 overflow-y-auto bg-white">
-        <NoteViewer />
+        <Editor />
       </div>
 
       {/* Collapse Trigger */}
