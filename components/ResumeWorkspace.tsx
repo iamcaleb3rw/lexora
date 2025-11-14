@@ -1,49 +1,147 @@
 "use client";
 
 import React, { useState } from "react";
-import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
+import { StructuredResume } from "@/app/actions/get-structured-resume";
 import Editor from "./LexicalEditor";
+import { SidebarTrigger } from "./TriggerButton";
 
-export default function ResumeWorkspace() {
+interface ResumeWorkspaceProps {
+  resumeObject: StructuredResume;
+}
+
+export default function ResumeWorkspace({
+  resumeObject,
+}: ResumeWorkspaceProps) {
   const [aiOpen, setAiOpen] = useState(true);
 
+  const generateHTML = (resume: StructuredResume) => {
+    const {
+      fullName,
+      emailAddress,
+      phoneNumber,
+      linkedinUsername,
+      portfolioUrl,
+      experience,
+      education,
+      skills,
+    } = resume;
+
+    const contactInfo = [
+      emailAddress,
+      phoneNumber,
+      linkedinUsername && `https://linkedin.com/in/${linkedinUsername}`,
+      portfolioUrl,
+    ]
+      .filter(Boolean)
+      .join(" | ");
+
+    const expHTML = experience.length
+      ? experience
+          .map(
+            (exp) => `
+            <div style="margin-bottom: 1rem; page-break-inside: avoid;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem;">
+                <div>
+                  <strong style="font-size: 1.1rem;">${exp.title}</strong>
+                  ${exp.company ? ` - ${exp.company}` : ""}
+                </div>
+                <div style="color: #666; font-size: 0.9rem; text-align: right;">
+                  ${exp.startDate || ""} ${exp.endDate ? ` - ${exp.endDate}` : exp.startDate ? " - Present" : ""}
+                </div>
+              </div>
+              ${exp.description ? `<div style="margin-top: 0.25rem; line-height: 1.4;">${exp.description.replace(/\n/g, "<br>")}</div>` : ""}
+            </div>
+          `
+          )
+          .join("")
+      : "<p>No experience listed.</p>";
+
+    const eduHTML = education.length
+      ? education
+          .map(
+            (edu) => `
+            <div style="margin-bottom: 1rem; page-break-inside: avoid;">
+              <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0.25rem;">
+                <div>
+                  <strong style="font-size: 1.1rem;">${edu.degree}</strong>
+                  ${edu.institution ? ` - ${edu.institution}` : ""}
+                </div>
+                <div style="color: #666; font-size: 0.9rem; text-align: right;">
+                  ${edu.startDate || ""} ${edu.endDate ? ` - ${edu.endDate}` : edu.startDate ? " - Present" : ""}
+                </div>
+              </div>
+              ${edu.description ? `<div style="margin-top: 0.25rem; line-height: 1.4;">${edu.description.replace(/\n/g, "<br>")}</div>` : ""}
+            </div>
+          `
+          )
+          .join("")
+      : "<p>No education listed.</p>";
+
+    const skillsHTML = skills.length
+      ? `<div style="line-height: 1.8;">${skills
+          .map((skill) => `${skill}`)
+          .join(" • ")}</div>`
+      : "<p>No skills listed.</p>";
+
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>${fullName || "Resume"}</title>
+  <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.4;
+      color: #333;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+      overflow: hidden;
+    }
+    @media print {
+      body { 
+        padding: 0;
+        overflow: visible;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header style="text-align: center; margin-bottom: 2rem; border-bottom: 2px solid #333; padding-bottom: 1rem;">
+    <h1 style="font-size: 2rem; font-weight: bold; margin: 0 0 0.5rem 0; color: #000;">${fullName || "Your Name"}</h1>
+    <div style="color: #555; font-size: 1rem;">${contactInfo}</div>
+  </header>
+  
+  <section style="margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.4rem; font-weight: 600; margin-bottom: 0.75rem; border-bottom: 1px solid #ddd; padding-bottom: 0.25rem; color: #000;">EXPERIENCE</h2>
+    ${expHTML}
+  </section>
+
+  <section style="margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.4rem; font-weight: 600; margin-bottom: 0.75rem; border-bottom: 1px solid #ddd; padding-bottom: 0.25rem; color: #000;">EDUCATION</h2>
+    ${eduHTML}
+  </section>
+
+  <section style="margin-bottom: 1.5rem;">
+    <h2 style="font-size: 1.4rem; font-weight: 600; margin-bottom: 0.75rem; border-bottom: 1px solid #ddd; padding-bottom: 0.25rem; color: #000;">SKILLS</h2>
+    ${skillsHTML}
+  </section>
+</body>
+</html>
+    `;
+  };
+
   return (
-    <div className="flex h-[calc(100vh-52px)] overflow-hidden border-t relative">
-      {/* Left Panel - Resume Editor */}
-      <div className="flex-1 overflow-y-auto bg-white">
-        <Editor />
-      </div>
-
-      {/* Collapse Trigger */}
-      <Button
-        variant={"outline"}
-        size={"icon"}
-        onClick={() => setAiOpen(!aiOpen)}
-        className="flex absolute hover:bg-white hover:opacity-100 shadow top-4 right-4 print:hidden"
-      >
-        {aiOpen ? (
-          <ChevronRight className="h-4 w-4 text-gray-600" />
-        ) : (
-          <ChevronLeft className="h-4 w-4 text-gray-600" />
-        )}
-      </Button>
-
-      {/* Right Panel - AI Suggestions */}
-      <div
-        className={`transition-all duration-300 border-l bg-gray-100 flex flex-col ${
-          aiOpen ? "w-[280px]" : "w-0"
-        } overflow-y-auto print:hidden`}
-      >
-        {aiOpen && (
-          <div className="flex-1 p-4">
-            <h3 className="font-semibold mb-4">AI Suggestions</h3>
-            <p className="text-gray-500 text-sm">
-              Your AI suggestions and resume feedback will appear here.
-            </p>
-            {/* Add your AI suggestion components here */}
-          </div>
-        )}
+    <div className="flex h-[calc(100vh-64px)] border-t">
+      <SidebarTrigger />
+      <div className="flex-1 flex min-h-0">
+        <Editor
+          initialHTML={generateHTML(resumeObject)}
+          aiOpen={aiOpen}
+          setAiOpen={setAiOpen}
+        />
       </div>
 
       {/* Print Styles */}

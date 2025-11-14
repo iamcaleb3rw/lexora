@@ -24,7 +24,7 @@ export const SidebarTrigger: React.FC<SidebarTriggerProps> = ({
     <Button
       variant="ghost"
       size="icon"
-      className={className ?? "fixed top-2 left-2 z-[99999]"}
+      className={className ?? "fixed top-2  bg-white left-2 z-[99999]"}
       onClick={toggleSidebar}
       {...props}
     >

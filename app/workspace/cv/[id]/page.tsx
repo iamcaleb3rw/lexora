@@ -12,10 +12,10 @@ const Page = async ({ params }: { params: Promise<{ id: string }> }) => {
   if (!resume) {
     notFound();
   }
-  // const resumeText = await getResumeText(resume.file_url);
-  // const finalResume = await getStructuredResume(resumeText);
-  // console.log("FINALRESUME", finalResume);
-  return <ResumeWorkspace />;
+  const resumeText = await getResumeText(resume.file_url);
+  const finalResume = await getStructuredResume(resumeText);
+  console.log("FINALRESUME", finalResume);
+  return <ResumeWorkspace resumeObject={finalResume} />;
 };
 
 export default Page;
