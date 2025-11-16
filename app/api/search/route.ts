@@ -70,7 +70,6 @@ export async function POST(req: Request) {
       .limit(5);
 
     console.log("[SEARCH] Returning results...");
-
     return NextResponse.json({
       courses: courseResults,
       lessons: lessonResults,

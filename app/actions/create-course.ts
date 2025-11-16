@@ -1,12 +1,16 @@
+// app/actions/create-course.ts
+import { getEmbedding } from "@/embedding";
 import { db } from "@/server";
 import { courses, coursesToCategories } from "@/server/db/schema";
+// 👈 your existing embedding util
+import { eq } from "drizzle-orm";
 
 type CreateCourseRequest = {
   companyId: number;
   title: string;
   description?: string;
   thumbnailUrl: string;
-  categories: string[]; // array of category IDs
+  categories: string[];
 };
 
 export async function createCourseWithCategories({
@@ -17,7 +21,11 @@ export async function createCourseWithCategories({
   categories,
 }: CreateCourseRequest) {
   try {
-    console.log("📝 Inserting course into DB...");
+    console.log("🧠 Generating embedding for new course...");
+    const textToEmbed = `${title}\n${description || ""}`;
+    const embedding = await getEmbedding(textToEmbed);
+
+    console.log("📝 Inserting course into DB with embedding...");
     const [newCourse] = await db
       .insert(courses)
       .values({
@@ -25,6 +33,7 @@ export async function createCourseWithCategories({
         title,
         description,
         thumbnail_url: thumbnailUrl,
+        embedding, // 👈 directly insert embedding here
       })
       .returning({ id: courses.id });
 
@@ -36,8 +45,6 @@ export async function createCourseWithCategories({
     }
 
     console.log(`🗂 Assigning ${categories.length} categories to course...`);
-
-    // Insert all category links in parallel
     await Promise.all(
       categories.map(async (categoryId) => {
         try {
@@ -52,10 +59,10 @@ export async function createCourseWithCategories({
       })
     );
 
-    console.log("🎯 Course creation and category assignment complete!");
+    console.log("🎯 Course creation complete with embeddings + categories!");
     return newCourse;
   } catch (e) {
-    console.error("💥 API course creation error:", e);
+    console.error("💥 Course creation failed:", e);
     throw new Error("Course creation failed, try again");
   }
 }

@@ -1,20 +1,22 @@
-"use client";
-
-import React, { useState } from "react";
-import { Button } from "./ui/button";
 import { StructuredResume } from "@/app/actions/get-structured-resume";
 import Editor from "./LexicalEditor";
 import { SidebarTrigger } from "./TriggerButton";
+import {
+  getResumeImprovements,
+  ResumeImprovements,
+} from "@/app/actions/get-resume-recommendations";
+import AIinset from "./AIinset";
+import { Suspense } from "react";
 
 interface ResumeWorkspaceProps {
   resumeObject: StructuredResume;
+  resumeText: string;
 }
 
-export default function ResumeWorkspace({
+export default async function ResumeWorkspace({
   resumeObject,
+  resumeText,
 }: ResumeWorkspaceProps) {
-  const [aiOpen, setAiOpen] = useState(true);
-
   const generateHTML = (resume: StructuredResume) => {
     const {
       fullName,
@@ -139,39 +141,13 @@ export default function ResumeWorkspace({
       <div className="flex-1 flex min-h-0">
         <Editor
           initialHTML={generateHTML(resumeObject)}
-          aiOpen={aiOpen}
-          setAiOpen={setAiOpen}
-        />
+          resumeText={resumeText}
+        >
+          <Suspense fallback={<p>Loading Recommendations...</p>}>
+            <AIinset resumeText={resumeText} />
+          </Suspense>
+        </Editor>
       </div>
-
-      {/* Print Styles */}
-      <style jsx global>{`
-        @media print {
-          body {
-            background: white !important;
-          }
-          .print\\:hidden {
-            display: none !important;
-          }
-          .print\\:shadow-none {
-            box-shadow: none !important;
-          }
-          .print\\:rounded-none {
-            border-radius: 0 !important;
-          }
-          .print\\:border-gray-300 {
-            border-color: #d1d5db !important;
-          }
-          .print\\:bg-white {
-            background: white !important;
-          }
-          .resume-container {
-            box-shadow: none !important;
-            margin: 0 !important;
-            padding: 0 !important;
-          }
-        }
-      `}</style>
     </div>
   );
 }
