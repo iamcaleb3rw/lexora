@@ -7,6 +7,8 @@ import {
 } from "@/app/actions/get-resume-recommendations";
 import AIinset from "./AIinset";
 import { Suspense } from "react";
+import SuggestionsLoading from "./SuggestionsLoading";
+import AIinsetSkeleton from "./SuggestionsLoading";
 
 interface ResumeWorkspaceProps {
   resumeObject: StructuredResume;
@@ -143,7 +145,7 @@ export default async function ResumeWorkspace({
           initialHTML={generateHTML(resumeObject)}
           resumeText={resumeText}
         >
-          <Suspense fallback={<p>Loading Recommendations...</p>}>
+          <Suspense fallback={<AIinsetSkeleton />}>
             <AIinset resumeText={resumeText} />
           </Suspense>
         </Editor>
