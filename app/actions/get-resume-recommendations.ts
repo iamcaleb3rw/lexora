@@ -22,14 +22,27 @@ const SuggestionItemSchema = z.object({
   examples: z.array(z.string()).optional(),
 });
 
+const ResumeSegmentSchema = z.object({
+  id: z.string(), // e.g. "seg_1"
+  text: z.string(), // exact bullet/line from the resume
+});
+const WeaknessItemSchema = z.object({
+  id: z.string(), // weakness id
+  targetId: z.string(), // id of the original resume segment
+  text: z.string(),
+});
+
 const RewriteExampleSchema = z.object({
+  id: z.string(), // rewrite item id
+  targetId: z.string(), // exact same segment id
   before: z.string(),
   after: z.string(),
 });
 
 const ResumeImprovementSchema = z.object({
+  segments: z.array(ResumeSegmentSchema), // NEW (required)
   strengths: z.array(z.string()),
-  weaknesses: z.array(z.string()),
+  weaknesses: z.array(WeaknessItemSchema),
   actionableSuggestions: z.array(SuggestionItemSchema),
   rewriteExamples: z.array(RewriteExampleSchema),
   metricsSuggestions: z.array(z.string()),
@@ -55,6 +68,7 @@ Follow these concrete Harvard rules:
 - Use specific, active, fact-based language.
 - Avoid general or passive phrases.
 - Use strong action verbs (Coordinated, Executed, Directed, Improved, Analyzed, Streamlined).
+- If STRONG action verbs were already used don't bother suggesting their change.
 - Do not use personal pronouns or narrative style.
 - Avoid slang, abbreviations (unless industry standard), and decorative language.
 - Do not start bullet points with dates.
@@ -63,6 +77,9 @@ Follow these concrete Harvard rules:
 - Ensure formatting consistency.
 - Recommend simpler, scannable structure.
 - Focus on results rather than duties.
+- Do not include new content that is not in the original resume text, only improve what's already there.
+- Make sure that the before text in rewrite suggestions figure in the original resume text.
+- If a resume is excellent, do not bother generating suggestions.
 
 Generate:
 
@@ -75,6 +92,16 @@ Generate:
    - example improvements if relevant  
 4. rewriteExamples → 2–5 rewritten bullet points (before → after)  
 5. metricsSuggestions → things the user could quantify but hasn’t
+
+Before producing weaknesses or rewriteExamples:
+
+1. Split the resume text into atomic segments (usually one bullet or sentence per segment).
+2. Assign a unique ID (e.g., "seg_1", "seg_2", etc.) to each segment.
+3. Every weakness MUST include the ID of the exact segment it refers to as targetId.
+4. Every rewriteExample MUST include the same targetId if it rewrites that segment.
+5. Weaknesses and rewriteExamples must never use partial text matching — always use the segment ID.
+
+Do not feel the need to always provide insight, if a resume is perfectly made, there's no need to generate suggestions
 
 Return **only JSON** matching the schema.
       `,

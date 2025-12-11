@@ -19,7 +19,7 @@ const CV = async () => {
   return (
     <div className="px-6">
       <SidebarTrigger />
-      {resumes ? <ResumeCards resumes={resumes} /> : <EmptyDemo />}
+      {resumes.length ? <ResumeCards resumes={resumes} /> : <EmptyDemo />}
     </div>
   );
 };

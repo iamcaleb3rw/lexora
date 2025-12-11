@@ -46,10 +46,6 @@ export default function Editor({
       >
         {children}
       </div>
-
-      {/* Toggle Button - Only show when AI panel is closed */}
-
-      {/* Custom CSS to fix SunEditor scrolling */}
     </div>
   );
 }
